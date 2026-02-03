@@ -68,9 +68,9 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   # Add project metrics
   cat >> metrics.tmp << EOF
 ### 🚀 $project
-![Todo](https://img.shields.io/badge/Todo-$todo-blue?style=flat-square)
-![In Progress](https://img.shields.io/badge/In%20Progress-$ongoing-yellow?style=flat-square)
-![Done](https://img.shields.io/badge/Done-$done-green?style=flat-square)
+![Todo](https://img.shields.io/badge/Todo-$todo-blue?style=for-the-badge)
+![In Progress](https://img.shields.io/badge/In%20Progress-$ongoing-yellow?style=for-the-badge)
+![Done](https://img.shields.io/badge/Done-$done-green?style=for-the-badge)
 ![Project Completion](https://img.shields.io/badge/${completion_pct}%25-${project_color}?style=for-the-badge&logo=github&logoColor=white)
 
 EOF
