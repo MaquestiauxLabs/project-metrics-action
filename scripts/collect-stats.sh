@@ -61,8 +61,8 @@ while IFS="|" read -r NUM TITLE; do
   T_ONGOING=$((T_ONGOING + P_ONGOING))
   T_DONE=$((T_DONE + P_DONE))
 
-  # Get repositories and their languages for this project
-  REPOS_WITH_LANGS=$(gh api graphql -f query='
+  # Get repositories for this project
+  REPOS=$(gh api graphql -f query='
     query($org: String!, $num: Int!) {
       organization(login: $org) {
         projectV2(number: $num) {
@@ -70,34 +70,33 @@ while IFS="|" read -r NUM TITLE; do
             nodes {
               content {
                 __typename
-                ... on Repository {
-                  name
-                  languages(first: 5) {
-                    edges {
-                      size
-                      node {
-                        name
-                      }
-                    }
-                  }
-                }
               }
             }
           }
         }
       }
     }' -f org="$ORG" -F num="$NUM" \
-    --jq '[.data.organization.projectV2.items.nodes[]
+    --jq '.data.organization.projectV2.items.nodes[]
           | select(.content.__typename == "Repository")
-          | .content.languages.edges[]
-          | {language: .node.name, size: .size}]
-          | group_by(.language)
-          | map({
-              language: .[0].language,
-              size: map(.size) | add
-            })
-          | sort_by(.size) | reverse
-          | .[:3]')
+          | .content | {name: .name, owner: .owner.login}')
+
+  REPOS_WITH_LANGS="[]"
+  if [[ -n "$REPOS" ]]; then
+    echo "$REPOS" | while read -r repo_info; do
+      REPO_NAME=$(echo "$repo_info" | jq -r '.name')
+      REPO_OWNER=$(echo "$repo_info" | jq -r '.owner')
+      
+      # Get languages for this repo
+      LANG_DATA=$(gh api repos/"$REPO_OWNER"/"$REPO_NAME"/languages \
+        --jq 'to_entries | map({language: .key, size: .value}) | sort_by(.size) | reverse | .[:3]')
+      
+      if [[ -n "$LANG_DATA" ]]; then
+        REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS $LANG_DATA" | jq -s 'flatten')
+      fi
+    done
+  fi
+
+  REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS" | jq 'group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
 
   jq -n \
     --arg project "$TITLE" \
