@@ -61,12 +61,12 @@ while IFS="|" read -r NUM TITLE; do
   T_ONGOING=$((T_ONGOING + P_ONGOING))
   T_DONE=$((T_DONE + P_DONE))
 
-  # Get repositories for this project
-  REPOS=$(gh api graphql -f query='
+  # Simple test - get all items in project first
+  ITEMS=$(gh api graphql -f query='
     query($org: String!, $num: Int!) {
       organization(login: $org) {
         projectV2(number: $num) {
-          items(first: 100) {
+          items(first: 10) {
             nodes {
               content {
                 __typename
@@ -76,29 +76,34 @@ while IFS="|" read -r NUM TITLE; do
         }
       }
     }' -f org="$ORG" -F num="$NUM" \
-    --jq '.data.organization.projectV2.items.nodes[]
-          | select(.content.__typename == "Repository")
-          | .content | {name: .name, owner: .owner.login}')
+    --jq '.data.organization.projectV2.items.nodes[]')
 
-  echo "DEBUG: Repos found for project $TITLE: $REPOS" >&2
+  echo "DEBUG: All items in project $TITLE: $ITEMS" >&2
+
+  # Look for repositories
+  REPOS=$(echo "$ITEMS" | jq -r 'select(.content.__typename == "Repository") | .content')
+
+  echo "DEBUG: Repository items in project $TITLE: $REPOS" >&2
 
   REPOS_WITH_LANGS="[]"
-  if [[ -n "$REPOS" && "$REPOS" != "null" ]]; then
-    echo "$REPOS" | jq -c '.' | while read -r repo_info; do
-      REPO_NAME=$(echo "$repo_info" | jq -r '.name')
-      REPO_OWNER=$(echo "$repo_info" | jq -r '.owner')
+  if [[ -n "$REPOS" && "$REPOS" != "null" && "$REPOS" != "" ]]; then
+    echo "$REPOS" | while read -r repo_content; do
+      # Extract repo info from the content
+      REPO_NAME=$(echo "$repo_content" | jq -r '.name')
+      REPO_OWNER=$(echo "$repo_content" | jq -r '.owner.login')
       
-      echo "DEBUG: Getting languages for $REPO_OWNER/$REPO_NAME" >&2
-      
-      # Get languages for this repo
-      LANG_DATA=$(gh api repos/"$REPO_OWNER"/"$REPO_NAME"/languages \
-        --jq 'to_entries | map({language: .key, size: .value}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
-      
-      echo "DEBUG: Languages for $REPO_OWNER/$REPO_NAME: $LANG_DATA" >&2
-      
-      if [[ -n "$LANG_DATA" && "$LANG_DATA" != "null" ]]; then
-        # Accumulate languages in a temp file
-        echo "$LANG_DATA" >> "tmp-langs-$NUM.json"
+      if [[ "$REPO_NAME" != "null" && "$REPO_OWNER" != "null" ]]; then
+        echo "DEBUG: Getting languages for $REPO_OWNER/$REPO_NAME" >&2
+        
+        # Get languages for this repo
+        LANG_DATA=$(gh api repos/"$REPO_OWNER"/"$REPO_NAME"/languages \
+          --jq 'to_entries | map({language: .key, size: .value}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
+        
+        echo "DEBUG: Languages for $REPO_OWNER/$REPO_NAME: $LANG_DATA" >&2
+        
+        if [[ -n "$LANG_DATA" && "$LANG_DATA" != "null" && "$LANG_DATA" != "[]" ]]; then
+          echo "$LANG_DATA" >> "tmp-langs-$NUM.json"
+        fi
       fi
     done
     
