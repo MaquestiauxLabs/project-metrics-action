@@ -26,23 +26,33 @@ runs:
     - name: Build metrics display
       shell: bash
       run: |
-        "$GITHUB_ACTION_PATH/scripts/build-badges.sh"
+        "$GITHUB_ACTION_PATH/scripts/build-global-overview.sh"
+        "$GITHUB_ACTION_PATH/scripts/build-project-breakdown.sh"
+        "$GITHUB_ACTION_PATH/scripts/build-languages.sh"
+        "$GITHUB_ACTION_PATH/scripts/build-last-updated.sh"
 
-    - name: Inject table into README
+    - name: Inject sections into README
       shell: bash
       run: |
         mkdir -p "$(dirname \"${{ inputs.readme_path }}\")"
-        if [[ ! -f "metrics.tmp" ]]; then
-          echo "ERROR: metrics.tmp not found. Make sure build-cards.sh ran successfully."
-          exit 1
-        fi
+        
+        # Check required temp files exist
+        for file in "global-overview.tmp" "project-breakdown.tmp" "languages.tmp" "last-updated.tmp"; do
+          if [[ ! -f "$file" ]]; then
+            echo "ERROR: $file not found. Build scripts may have failed."
+            exit 1
+          fi
+        done
+        
         if [[ ! -f "${{ inputs.readme_path }}" ]]; then
           echo "ERROR: README file not found at ${{ inputs.readme_path }}"
           exit 1
         fi
-        if ! grep -q "<!-- METRICS:START -->" "${{ inputs.readme_path }}" || ! grep -q "<!-- METRICS:END -->" "${{ inputs.readme_path }}"; then
-          echo "ERROR: README file missing METRICS markers"
-          exit 1
-        fi
-        awk -f "$GITHUB_ACTION_PATH/scripts/inject-readme.awk" "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.new"
+        
+        # Inject all sections
+        awk -f "$GITHUB_ACTION_PATH/scripts/inject-global-overview.awk" "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.tmp" && \
+        awk -f "$GITHUB_ACTION_PATH/scripts/inject-project-breakdown.awk" "${{ inputs.readme_path }}.tmp" > "${{ inputs.readme_path }}.new" && \
+        awk -f "$GITHUB_ACTION_PATH/scripts/inject-languages.awk" "${{ inputs.readme_path }}.new" > "${{ inputs.readme_path }}.tmp" && \
+        awk -f "$GITHUB_ACTION_PATH/scripts/inject-last-updated.awk" "${{ inputs.readme_path }}.tmp" > "${{ inputs.readme_path }}.new"
+        
         mv "${{ inputs.readme_path }}.new" "${{ inputs.readme_path }}"
