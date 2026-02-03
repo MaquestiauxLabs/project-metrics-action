@@ -4,6 +4,11 @@ set -euo pipefail
 PROJECTS_JSON="all-projects-summary.json"
 REPOS_JSON="all-repos-summary.json"
 
+# Debug: Print JSON structure
+echo "=== DEBUG: Projects JSON structure ===" >&2
+cat "$PROJECTS_JSON" >&2
+echo "=== END DEBUG ===" >&2
+
 # Generate CSS for cards
 cat > metrics.tmp << 'EOF'
 <style>
