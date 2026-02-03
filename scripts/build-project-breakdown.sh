@@ -25,13 +25,21 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   fi
   
   # Determine project completion color
-  project_color="red"
-  if [[ $completion_pct -ge 80 ]]; then
+  if [[ $total -eq 0 ]]; then
     project_color="brightgreen"
+    completion_display="0%25 (clean)"
+  elif [[ $completion_pct -ge 80 ]]; then
+    project_color="brightgreen"
+    completion_display="${completion_pct}%25"
   elif [[ $completion_pct -ge 50 ]]; then
     project_color="yellow"
+    completion_display="${completion_pct}%25"
   elif [[ $completion_pct -ge 25 ]]; then
     project_color="orange"
+    completion_display="${completion_pct}%25"
+  else
+    project_color="red"
+    completion_display="${completion_pct}%25"
   fi
   
   # Get project languages with debugging
@@ -47,7 +55,7 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
 ![In Progress](https://img.shields.io/badge/In%20Progress-$ongoing-yellow?style=for-the-badge)
 ![Done](https://img.shields.io/badge/Done-$done-green?style=for-the-badge)
 ![No Status](https://img.shields.io/badge/No%20Status-$no_status-grey?style=for-the-badge)
-![Project Completion](https://img.shields.io/badge/${completion_pct}%25-${project_color}?style=for-the-badge&logo=github&logoColor=white)
+![Project Completion](https://img.shields.io/badge/Completion-${completion_display}-${project_color}?style=for-the-badge&logo=github&logoColor=white)
 
 EOF
 

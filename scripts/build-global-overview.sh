@@ -18,13 +18,21 @@ else
 fi
 
 # Determine completion color
-completion_color="red"
-if [[ $completion_rate -ge 80 ]]; then
+if [[ $total_items -eq 0 ]]; then
   completion_color="brightgreen"
+  completion_display="0%25 (clean)"
+elif [[ $completion_rate -ge 80 ]]; then
+  completion_color="brightgreen"
+  completion_display="${completion_rate}%25"
 elif [[ $completion_rate -ge 50 ]]; then
   completion_color="yellow"
+  completion_display="${completion_rate}%25"
 elif [[ $completion_rate -ge 25 ]]; then
   completion_color="orange"
+  completion_display="${completion_rate}%25"
+else
+  completion_color="red"
+  completion_display="${completion_rate}%25"
 fi
 
 # Generate compact global overview
@@ -35,6 +43,6 @@ cat > global-overview.tmp << EOF
 ![In Progress](https://img.shields.io/badge/In%20Progress-$total_ongoing-yellow?style=for-the-badge&logo=gitlab&logoColor=white) 
 ![Done](https://img.shields.io/badge/Done-$total_done-green?style=for-the-badge&logo=checkmarx&logoColor=white)
 ![No Status](https://img.shields.io/badge/No%20Status-$total_no_status-grey?style=for-the-badge&logo=help&logoColor=white)
-![Completion Rate](https://img.shields.io/badge/Completion-${completion_rate}%25-${completion_color}?style=for-the-badge&logo=github&logoColor=white)
+![Completion Rate](https://img.shields.io/badge/Completion-${completion_display}-${completion_color}?style=for-the-badge&logo=github&logoColor=white)
 
 EOF
