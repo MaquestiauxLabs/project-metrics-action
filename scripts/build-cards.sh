@@ -4,10 +4,10 @@ set -euo pipefail
 PROJECTS_JSON="all-projects-summary.json"
 REPOS_JSON="all-repos-summary.json"
 
-# Debug: Print JSON structure
-echo "=== DEBUG: Projects JSON structure ===" >&2
-cat "$PROJECTS_JSON" >&2
-echo "=== END DEBUG ===" >&2
+# Check file content and clean it if needed
+echo "Checking file content..." >&2
+wc -l "$PROJECTS_JSON" >&2
+tail -5 "$PROJECTS_JSON" >&2
 
 # Generate CSS for cards
 cat > metrics.tmp << 'EOF'
@@ -102,20 +102,21 @@ if ! jq empty "$PROJECTS_JSON" 2>/dev/null; then
   exit 1
 fi
 
-jq -r '.[] | 
-  "\(.project)" |
-  "\(.todo)" |
-  "\(.ongoing)" |
-  "\(.done)" |
-  "\(.todo + .ongoing + .done)" |
-  if (.todo + .ongoing + .done) > 0 then (.done / (.todo + .ongoing + .done) * 100) else 0 end' \
-  "$PROJECTS_JSON" | while IFS=$'\n' read -r project; do
-    read todo
-    read ongoing
-    read done
-    read total
-    read completion_pct
-    completion_width=$(echo "$completion_pct * 0.8" | bc -l 2>/dev/null || echo "0")
+# Process each project using a safer approach
+jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
+  project=$(echo "$project_json" | jq -r '.project')
+  todo=$(echo "$project_json" | jq -r '.todo')
+  ongoing=$(echo "$project_json" | jq -r '.ongoing')
+  done=$(echo "$project_json" | jq -r '.done')
+  total=$((todo + ongoing + done))
+  
+  if [[ $total -gt 0 ]]; then
+    completion_pct=$((done * 100 / total))
+  else
+    completion_pct=0
+  fi
+  
+  completion_width=$(echo "$completion_pct * 0.8" | bc -l 2>/dev/null || echo "0")
 
     cat >> metrics.tmp << EOF
 <div class="project-card">
@@ -142,7 +143,7 @@ jq -r '.[] |
 </div>
 </div>
 EOF
-  done
+done
 
 # Repository section temporarily disabled
 # Will be re-enabled when repository collection is fixed
