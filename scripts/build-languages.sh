@@ -35,7 +35,7 @@ EOF
     
     # Create language badge
     cat >> languages.tmp << EOF
-![${lang}](https://img.shields.io/badge/${lang}-${percentage}%25-${lang_color}?style=flat-square) 
+![${lang}](https://img.shields.io/badge/${lang}-${percentage}%25-${lang_color}?style=for-the-badge) 
 EOF
   done
 
