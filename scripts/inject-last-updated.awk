@@ -1,6 +1,6 @@
 BEGIN { in_block = 0 }
 
-<!-- LAST_UPDATED:START -->/ {
+/<!-- LAST_UPDATED:START -->/ {
   print
   while ((getline line < "last-updated.tmp") > 0)
     print line
@@ -8,7 +8,7 @@ BEGIN { in_block = 0 }
   next
 }
 
-<!-- LAST_UPDATED:END -->/ {
+/<!-- LAST_UPDATED:END -->/ {
   in_block = 0
   print
   next

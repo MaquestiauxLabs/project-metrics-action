@@ -1,6 +1,6 @@
 BEGIN { in_block = 0 }
 
-<!-- GLOBAL_OVERVIEW:START -->/ {
+/<!-- GLOBAL_OVERVIEW:START -->/ {
   print
   while ((getline line < "global-overview.tmp") > 0)
     print line
@@ -8,7 +8,7 @@ BEGIN { in_block = 0 }
   next
 }
 
-<!-- GLOBAL_OVERVIEW:END -->/ {
+/<!-- GLOBAL_OVERVIEW:END -->/ {
   in_block = 0
   print
   next

@@ -1,6 +1,6 @@
 BEGIN { in_block = 0 }
 
-<!-- LANGUAGES:START -->/ {
+/<!-- LANGUAGES:START -->/ {
   print
   while ((getline line < "languages.tmp") > 0)
     print line
@@ -8,7 +8,7 @@ BEGIN { in_block = 0 }
   next
 }
 
-<!-- LANGUAGES:END -->/ {
+/<!-- LANGUAGES:END -->/ {
   in_block = 0
   print
   next

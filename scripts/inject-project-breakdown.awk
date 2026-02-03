@@ -1,6 +1,6 @@
 BEGIN { in_block = 0 }
 
-<!-- PROJECT_BREAKDOWN:START -->/ {
+/<!-- PROJECT_BREAKDOWN:START -->/ {
   print
   while ((getline line < "project-breakdown.tmp") > 0)
     print line
@@ -8,7 +8,7 @@ BEGIN { in_block = 0 }
   next
 }
 
-<!-- PROJECT_BREAKDOWN:END -->/ {
+/<!-- PROJECT_BREAKDOWN:END -->/ {
   in_block = 0
   print
   next
