@@ -1,0 +1,35 @@
+name: "Org Project Metrics"
+description: "Collect GitHub Projects v2 stats and inject a metrics table into a README"
+
+inputs:
+  org:
+    description: "GitHub organization name"
+    required: true
+  token:
+    description: "GitHub token with projects access"
+    required: true
+  readme_path:
+    description: "Path to the README file"
+    default: ".github/profile/README.md"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Collect project stats
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        chmod +x scripts/*.sh
+        scripts/collect-stats.sh "${{ inputs.org }}"
+
+    - name: Build metrics table
+      shell: bash
+      run: |
+        scripts/build-table.sh
+
+    - name: Inject table into README
+      shell: bash
+      run: |
+        awk -f scripts/inject-readme.awk "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.new"
+        mv "${{ inputs.readme_path }}.new" "${{ inputs.readme_path }}"
