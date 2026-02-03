@@ -1,6 +1,6 @@
 BEGIN { in_block = 0 }
 
-<!-- METRICS:START -->/ {
+/<!-- METRICS:START -->/ {
   print
   while ((getline line < "metrics.tmp") > 0)
     print line
@@ -8,7 +8,7 @@ BEGIN { in_block = 0 }
   next
 }
 
-<!-- METRICS:END -->/ {
+/<!-- METRICS:END -->/ {
   in_block = 0
   print
   next

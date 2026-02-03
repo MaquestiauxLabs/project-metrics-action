@@ -4,11 +4,6 @@ set -euo pipefail
 PROJECTS_JSON="all-projects-summary.json"
 REPOS_JSON="all-repos-summary.json"
 
-# Check file content and clean it if needed
-echo "Checking file content..." >&2
-wc -l "$PROJECTS_JSON" >&2
-tail -5 "$PROJECTS_JSON" >&2
-
 # Generate CSS for cards
 cat > metrics.tmp << 'EOF'
 <style>
