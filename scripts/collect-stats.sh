@@ -57,6 +57,9 @@ while IFS="|" read -r NUM TITLE; do
     | select(.status.name != null)
     | select(.status.name == "Done" or .status.name == "Complete")] | length')
 
+  P_NO_STATUS=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status.name == null)] | length')
+
   T_TODO=$((T_TODO + P_TODO))
   T_ONGOING=$((T_ONGOING + P_ONGOING))
   T_DONE=$((T_DONE + P_DONE))
@@ -124,8 +127,9 @@ while IFS="|" read -r NUM TITLE; do
     --argjson todo "$P_TODO" \
     --argjson ongoing "$P_ONGOING" \
     --argjson done "$P_DONE" \
+    --argjson no_status "$P_NO_STATUS" \
     --argjson languages "$REPOS_WITH_LANGS" \
-    '{project:$project,todo:$todo,ongoing:$ongoing,done:$done,languages:$languages}' \
+    '{project:$project,todo:$todo,ongoing:$ongoing,done:$done,no_status:$no_status,languages:$languages}' \
     > "project-$NUM-stats.json"
 
 done <<< "$PROJECTS"

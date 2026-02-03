@@ -15,7 +15,8 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   todo=$(echo "$project_json" | jq -r '.todo')
   ongoing=$(echo "$project_json" | jq -r '.ongoing')
   done=$(echo "$project_json" | jq -r '.done')
-  total=$((todo + ongoing + done))
+  no_status=$(echo "$project_json" | jq -r '.no_status')
+  total=$((todo + ongoing + done + no_status))
   
   if [[ $total -gt 0 ]]; then
     completion_pct=$((done * 100 / total))
@@ -45,6 +46,7 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
 ![Todo](https://img.shields.io/badge/Todo-$todo-blue?style=for-the-badge)
 ![In Progress](https://img.shields.io/badge/In%20Progress-$ongoing-yellow?style=for-the-badge)
 ![Done](https://img.shields.io/badge/Done-$done-green?style=for-the-badge)
+![No Status](https://img.shields.io/badge/No%20Status-$no_status-grey?style=for-the-badge)
 ![Project Completion](https://img.shields.io/badge/${completion_pct}%25-${project_color}?style=for-the-badge&logo=github&logoColor=white)
 
 EOF
