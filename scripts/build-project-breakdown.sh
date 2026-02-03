@@ -36,7 +36,7 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   # Add project metrics using common utilities
   cat >> project-breakdown.tmp << EOF
 ### 🚀 $project
-$(generate_all_status_badges "$todo" "$ongoing" "$done" "$no_status" "for-the-badge" "false")
+$(generate_all_status_badges "$todo" "$ongoing" "$done" "$no_status" "for-the-badge" "true")
 ![Project Completion]($(generate_completion_badge "$completion_pct" "for-the-badge" "true"))
 
 EOF
