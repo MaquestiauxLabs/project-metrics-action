@@ -93,9 +93,15 @@ while IFS="|" read -r NUM TITLE; do
                 __typename
                 ... on Repository {
                   name
-                  owner { login }
-                  issues(states: OPEN) { totalCount }
-                  pullRequests(states: OPEN) { totalCount }
+                  owner {
+                    login
+                  }
+                  issues(states: OPEN) {
+                    totalCount
+                  }
+                  pullRequests(states: OPEN) {
+                    totalCount
+                  }
                   stargazerCount
                   forkCount
                 }
