@@ -7,7 +7,6 @@ source "$(dirname "$0")/language-utils.sh"
 # Generate language statistics section
 if [[ -f "language-stats.json" ]]; then
   cat > languages.tmp << EOF
-## 💻 Programming Languages
 
 EOF
 
