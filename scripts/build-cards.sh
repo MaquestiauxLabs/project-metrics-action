@@ -7,7 +7,6 @@ REPOS_JSON="all-repos-summary.json"
 # Generate markdown-friendly metrics
 cat > metrics.tmp << 'EOF'
 ## 📊 Project Overview
-
 EOF
 
 # Generate project cards
@@ -39,8 +38,6 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   completion_width=$(echo "$completion_pct * 0.8" | bc -l 2>/dev/null || echo "0")
 
     cat >> metrics.tmp << EOF
-<div class="project-card">
-
 ### 🚀 $project
 
 | Todo | In Progress | Done |
@@ -52,8 +49,6 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
 </div>
 
 *${total} items • ${completion_pct}% complete*
-
-</div>
 
 EOF
 done
