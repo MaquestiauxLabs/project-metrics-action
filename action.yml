@@ -32,13 +32,16 @@ runs:
       shell: bash
       run: |
         mkdir -p "$(dirname \"${{ inputs.readme_path }}\")"
+        if [[ ! -f "table.tmp" ]]; then
+          echo "ERROR: table.tmp not found. Make sure build-table.sh ran successfully."
+          exit 1
+        fi
         if [[ ! -f "${{ inputs.readme_path }}" ]]; then
           echo "ERROR: README file not found at ${{ inputs.readme_path }}"
-          echo "Make sure to checkout the .github repository first:"
-          echo "  - uses: actions/checkout@v4"
-          echo "    with:"
-          echo "      repository: \${{ github.organization }}/.github"
-          echo "      path: .github"
+          exit 1
+        fi
+        if ! grep -q "<!-- METRICS:START -->" "${{ inputs.readme_path }}" || ! grep -q "<!-- METRICS:END -->" "${{ inputs.readme_path }}"; then
+          echo "ERROR: README file missing METRICS markers"
           exit 1
         fi
         awk -f "$GITHUB_ACTION_PATH/scripts/inject-readme.awk" "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.new"
