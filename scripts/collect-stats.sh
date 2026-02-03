@@ -91,20 +91,6 @@ while IFS="|" read -r NUM TITLE; do
             nodes {
               content {
                 __typename
-                ... on Repository {
-                  name
-                  owner {
-                    login
-                  }
-                  issues(states: OPEN) {
-                    totalCount
-                  }
-                  pullRequests(states: OPEN) {
-                    totalCount
-                  }
-                  stargazerCount
-                  forkCount
-                }
               }
             }
           }
@@ -113,17 +99,26 @@ while IFS="|" read -r NUM TITLE; do
     }' -f org="$ORG" -F num="$NUM" \
     --jq '.data.organization.projectV2.items.nodes[]
           | select(.content.__typename == "Repository")
-          | .content | {
-              name: .name,
-              owner: .owner.login,
-              issues: .issues.totalCount,
-              prs: .pullRequests.totalCount,
-              stars: .stargazerCount,
-              forks: .forkCount
-            }')
+          | .content')
 
   if [[ -n "$REPOS" ]]; then
-    echo "$REPOS" | jq --arg project "$TITLE" '. + {project: $project}' > "repo-$NUM-stats.json"
+    # For each repository found, get its stats separately
+    echo "$REPOS" | while read -r repo_info; do
+      REPO_NAME=$(echo "$repo_info" | jq -r '.name')
+      REPO_OWNER=$(echo "$repo_info" | jq -r '.owner.login')
+      
+      REPO_STATS=$(gh api repos/"$REPO_OWNER"/"$REPO_NAME" \
+        --jq '{
+          name: .name,
+          owner: .owner.login,
+          issues: .open_issues_count,
+          prs: (gh search prs "repo:$REPO_OWNER/$REPO_NAME state:open" --jq ". | length" 2>/dev/null || echo "0"),
+          stars: .stargazers_count,
+          forks: .forks_count
+        }')
+      
+      echo "$REPO_STATS" | jq --arg project "$TITLE" '. + {project: $project}' >> "repo-$NUM-stats.json"
+    done
   fi
 done <<< "$PROJECTS"
 
