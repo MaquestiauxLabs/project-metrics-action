@@ -102,13 +102,13 @@ if ! jq empty "$PROJECTS_JSON" 2>/dev/null; then
   exit 1
 fi
 
-jq -r '.[] |
-  "\(.project // "Unknown")" |
-  "\(.todo // 0)" |
-  "\(.ongoing // 0)" |
-  "\(.done // 0)" |
-  "\((.todo // 0) + (.ongoing // 0) + (.done // 0))" |
-  if . > 0 then ((.done // 0) / . * 100) else 0 end' \
+jq -r '.[] | 
+  "\(.project)" |
+  "\(.todo)" |
+  "\(.ongoing)" |
+  "\(.done)" |
+  "\(.todo + .ongoing + .done)" |
+  if (.todo + .ongoing + .done) > 0 then (.done / (.todo + .ongoing + .done) * 100) else 0 end' \
   "$PROJECTS_JSON" | while IFS=$'\n' read -r project; do
     read todo
     read ongoing
