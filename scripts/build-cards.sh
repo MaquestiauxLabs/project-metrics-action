@@ -4,11 +4,6 @@ set -euo pipefail
 PROJECTS_JSON="all-projects-summary.json"
 REPOS_JSON="all-repos-summary.json"
 
-# Debug: Print JSON structure
-echo "=== DEBUG: Projects JSON structure ===" >&2
-cat "$PROJECTS_JSON" >&2
-echo "=== END DEBUG ===" >&2
-
 # Generate CSS for cards
 cat > metrics.tmp << 'EOF'
 <style>
@@ -138,43 +133,7 @@ jq -r '.[] |
 EOF
   done
 
-# Generate repository cards
-cat >> metrics.tmp << 'EOF'
-</div>
-<div class="metrics-container">
-<h3>🗂️ Repository Activity</h3>
-EOF
-
-jq -r '.[] |
-  "\(.project)" |
-  "\(.owner)/\(.name)" |
-  "\(.issues)" |
-  "\(.prs)" |
-  "\(.stars)" |
-  "\(.forks)"' \
-  "$REPOS_JSON" | while IFS=$'\n' read -r project; do
-    read repo_name
-    read issues
-    read prs
-    read stars
-    read forks
-
-    cat >> metrics.tmp << EOF
-<div class="repo-card">
-<div class="repo-title">📦 $repo_name</div>
-<div class="card-title">$project</div>
-<div class="repo-stats">
-  <div class="repo-stat">🐛 Issues: <span class="repo-stat-value">$issues</span></div>
-  <div class="repo-stat">🔀 PRs: <span class="repo-stat-value">$prs</span></div>
-  <div class="repo-stat">⭐ Stars: <span class="repo-stat-value">$stars</span></div>
-  <div class="repo-stat">🍴 Forks: <span class="repo-stat-value">$forks</span></div>
-</div>
-</div>
-EOF
-  done
-
-cat >> metrics.tmp << 'EOF'
-</div>
-EOF
+# Repository section temporarily disabled
+# Will be re-enabled when repository collection is fixed
 
 echo "_Last updated: $(date -u +'%Y-%m-%d %H:%M UTC')_" >> metrics.tmp
