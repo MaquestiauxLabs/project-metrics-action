@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# =============================================================================
+# LANGUAGE UTILITIES
+# =============================================================================
+
 # Get language color based on language name
 # Usage: get_language_color "JavaScript"
 get_language_color() {
@@ -56,4 +60,113 @@ generate_language_badges() {
       fi
     done
   fi
+}
+
+# =============================================================================
+# STATUS UTILITIES
+# =============================================================================
+
+# Get status color and icon based on status name
+# Usage: get_status_info "Todo" -> "blue" "todoist"
+get_status_info() {
+  local status="$1"
+  local color=""
+  local logo=""
+  
+  case "$status" in
+    "Todo") color="blue"; logo="todoist" ;;
+    "In Progress") color="yellow"; logo="gitlab" ;;
+    "Done") color="green"; logo="checkmarx" ;;
+    "No Status") color="grey"; logo="help" ;;
+  esac
+  
+  echo "$color $logo"
+}
+
+# Generate status badge URL
+# Usage: generate_status_badge "Todo" 5 "for-the-badge" -> "https://img.shields.io/badge/Todo-5-blue?style=for-the-badge&logo=todoist&logoColor=white"
+generate_status_badge() {
+  local status="$1"
+  local count="$2"
+  local style="${3:-"for-the-badge"}"
+  local include_logo="${4:-"true"}"
+  
+  # URL encode spaces
+  local status_encoded="${status// /%20}"
+  
+  local status_info
+  status_info=$(get_status_info "$status")
+  local color=$(echo "$status_info" | cut -d' ' -f1)
+  local logo=$(echo "$status_info" | cut -d' ' -f2)
+  
+  local url="https://img.shields.io/badge/${status_encoded}-${count}-${color}?style=${style}"
+  
+  if [[ "$include_logo" == "true" ]]; then
+    url="${url}&logo=${logo}&logoColor=white"
+  fi
+  
+  echo "$url"
+}
+
+# Generate status badges for all four statuses
+# Usage: generate_all_status_badges 5 3 10 2 "for-the-badge" -> returns badge URLs for Todo, In Progress, Done, No Status
+generate_all_status_badges() {
+  local todo="$1"
+  local ongoing="$2"
+  local done="$3"
+  local no_status="$4"
+  local style="${5:-"for-the-badge"}"
+  local include_logo="${6:-"true"}"
+  
+  echo "![Todo]($(generate_status_badge "Todo" "$todo" "$style" "$include_logo")) "
+  echo "![In Progress]($(generate_status_badge "In Progress" "$ongoing" "$style" "$include_logo")) "
+  echo "![Done]($(generate_status_badge "Done" "$done" "$style" "$include_logo")) "
+  if [[ "$no_status" -gt 0 ]] || [[ "$include_logo" == "true" ]]; then
+    echo "![No Status]($(generate_status_badge "No Status" "$no_status" "$style" "$include_logo")) "
+  fi
+}
+
+# =============================================================================
+# COMPLETION UTILITIES
+# =============================================================================
+
+# Get completion color based on completion percentage
+# Usage: get_completion_color 85 -> "brightgreen"
+get_completion_color() {
+  local completion_rate="$1"
+  local color="red"
+  
+  if [[ $completion_rate -ge 80 ]]; then
+    color="brightgreen"
+  elif [[ $completion_rate -ge 50 ]]; then
+    color="yellow"
+  elif [[ $completion_rate -ge 25 ]]; then
+    color="orange"
+  fi
+  
+  echo "$color"
+}
+
+# Generate completion badge URL
+# Usage: generate_completion_badge 85 "for-the-badge" -> "https://img.shields.io/badge/Completion-85%25-brightgreen?style=for-the-badge&logo=github&logoColor=white"
+generate_completion_badge() {
+  local completion_rate="$1"
+  local style="${2:-"for-the-badge"}"
+  local include_logo="${3:-"true"}"
+  
+  local color
+  color=$(get_completion_color "$completion_rate")
+  
+  local display_text="${completion_rate}%25"
+  if [[ $completion_rate -eq 0 ]]; then
+    display_text="0%25%20(clean)"
+  fi
+  
+  local url="https://img.shields.io/badge/Completion-${display_text}-${color}?style=${style}"
+  
+  if [[ "$include_logo" == "true" ]]; then
+    url="${url}&logo=github&logoColor=white"
+  fi
+  
+  echo "$url"
 }
