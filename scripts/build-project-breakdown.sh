@@ -44,7 +44,7 @@ EOF
   # Add languages if they exist
   if [[ "$languages" != "null" && "$languages" != "" ]]; then
     # Create language badges using common function
-    generate_language_badges "$languages" "flat-square" "true">> project-breakdown.tmp
+    generate_language_badges "$languages" "flat-square" >> project-breakdown.tmp
     
     cat >> project-breakdown.tmp << EOF
 
