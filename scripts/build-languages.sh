@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source common language utilities
+source "$(dirname "$0")/language-utils.sh"
+
 # Generate language statistics section
 if [[ -f "language-stats.json" ]]; then
   cat > languages.tmp << EOF
@@ -18,24 +21,11 @@ EOF
       percentage=0
     fi
     
-    # Language colors
-    lang_color="grey"
-    case "$lang" in
-      "JavaScript") lang_color="yellow" ;;
-      "TypeScript") lang_color="blue" ;;
-      "Python") lang_color="green" ;;
-      "Java") lang_color="orange" ;;
-      "Go") lang_color="cyan" ;;
-      "Rust") lang_color="red" ;;
-      "C++") lang_color="blue" ;;
-      "HTML") lang_color="orange" ;;
-      "CSS") lang_color="purple" ;;
-      "Shell") lang_color="green" ;;
-    esac
-    
-    # Create language badge
+    # Create language badge using common function
+    local badge_url
+    badge_url=$(generate_language_badge "$lang" "for-the-badge" "$percentage")
     cat >> languages.tmp << EOF
-![${lang}](https://img.shields.io/badge/${lang}-${percentage}%25-${lang_color}?style=for-the-badge) 
+![${lang}](${badge_url}) 
 EOF
   done
 

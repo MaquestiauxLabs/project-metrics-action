@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Source common language utilities
+source "$(dirname "$0")/language-utils.sh"
+
 PROJECTS_JSON="all-projects-summary.json"
 
 # Generate project breakdown
@@ -61,29 +64,8 @@ EOF
 
   # Add languages if they exist
   if [[ "$languages" != "null" && "$languages" != "" ]]; then
-    # Create language badges
-    echo "$languages" | tr ',' '\n' | while read -r lang; do
-      lang=$(echo "$lang" | xargs) # trim whitespace
-      
-      # Language colors
-      lang_color="grey"
-      case "$lang" in
-        "JavaScript") lang_color="yellow" ;;
-        "TypeScript") lang_color="blue" ;;
-        "Python") lang_color="green" ;;
-        "Java") lang_color="orange" ;;
-        "Go") lang_color="cyan" ;;
-        "Rust") lang_color="red" ;;
-        "C++") lang_color="blue" ;;
-        "HTML") lang_color="orange" ;;
-        "CSS") lang_color="purple" ;;
-        "Shell") lang_color="green" ;;
-      esac
-      
-      cat >> project-breakdown.tmp << EOF
-![${lang}](https://img.shields.io/badge/${lang}-${lang_color}?style=flat-square&logo=${lang,,}&logoColor=white) 
-EOF
-    done
+    # Create language badges using common function
+    generate_language_badges "$languages" "flat-square" >> project-breakdown.tmp
     
     cat >> project-breakdown.tmp << EOF
 
