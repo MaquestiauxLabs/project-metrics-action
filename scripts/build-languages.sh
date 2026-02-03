@@ -22,7 +22,6 @@ EOF
     fi
     
     # Create language badge using common function
-    local badge_url
     badge_url=$(generate_language_badge "$lang" "for-the-badge" "$percentage")
     cat >> languages.tmp << EOF
 ![${lang}](${badge_url}) 
