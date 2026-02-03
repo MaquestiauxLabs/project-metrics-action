@@ -27,38 +27,17 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
     completion_pct=0
   fi
   
-  # Determine project completion color
-  if [[ $total -eq 0 ]]; then
-    project_color="brightgreen"
-    completion_display="0%25%20(clean)"
-  elif [[ $completion_pct -ge 80 ]]; then
-    project_color="brightgreen"
-    completion_display="${completion_pct}%25"
-  elif [[ $completion_pct -ge 50 ]]; then
-    project_color="yellow"
-    completion_display="${completion_pct}%25"
-  elif [[ $completion_pct -ge 25 ]]; then
-    project_color="orange"
-    completion_display="${completion_pct}%25"
-  else
-    project_color="red"
-    completion_display="${completion_pct}%25"
-  fi
-  
   # Get project languages with debugging
   languages_json=$(echo "$project_json" | jq '.languages // []')
   echo "DEBUG: Languages JSON for $project: $languages_json" >&2
   languages=$(echo "$project_json" | jq -r '.languages // [] | map(.language) | join(", ")')
   echo "DEBUG: Languages string for $project: $languages" >&2
   
-  # Add project metrics
+  # Add project metrics using common utilities
   cat >> project-breakdown.tmp << EOF
 ### 🚀 $project
-![Todo](https://img.shields.io/badge/Todo-$todo-blue?style=for-the-badge)
-![In Progress](https://img.shields.io/badge/In%20Progress-$ongoing-yellow?style=for-the-badge)
-![Done](https://img.shields.io/badge/Done-$done-green?style=for-the-badge)
-![No Status](https://img.shields.io/badge/No%20Status-$no_status-grey?style=for-the-badge)
-![Project Completion](https://img.shields.io/badge/Completion-${completion_display}-${project_color}?style=for-the-badge&logo=github&logoColor=white)
+$(generate_all_status_badges "$todo" "$ongoing" "$done" "$no_status" "for-the-badge" "false")
+![Project Completion]($(generate_completion_badge "$completion_pct" "for-the-badge" "true"))
 
 EOF
 
