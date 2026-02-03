@@ -20,16 +20,16 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        chmod +x scripts/*.sh
-        scripts/collect-stats.sh "${{ inputs.org }}"
+        chmod +x "$GITHUB_ACTION_PATH/scripts/"*.sh
+        "$GITHUB_ACTION_PATH/scripts/collect-stats.sh" "${{ inputs.org }}"
 
     - name: Build metrics table
       shell: bash
       run: |
-        scripts/build-table.sh
+        "$GITHUB_ACTION_PATH/scripts/build-table.sh"
 
     - name: Inject table into README
       shell: bash
       run: |
-        awk -f scripts/inject-readme.awk "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.new"
+        awk -f "$GITHUB_ACTION_PATH/scripts/inject-readme.awk" "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.new"
         mv "${{ inputs.readme_path }}.new" "${{ inputs.readme_path }}"
