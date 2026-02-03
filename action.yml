@@ -31,5 +31,6 @@ runs:
     - name: Inject table into README
       shell: bash
       run: |
+        mkdir -p "$(dirname \"${{ inputs.readme_path }}\")"
         awk -f "$GITHUB_ACTION_PATH/scripts/inject-readme.awk" "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.new"
         mv "${{ inputs.readme_path }}.new" "${{ inputs.readme_path }}"
