@@ -61,57 +61,58 @@ while IFS="|" read -r NUM TITLE; do
   T_ONGOING=$((T_ONGOING + P_ONGOING))
   T_DONE=$((T_DONE + P_DONE))
 
-  # Simple test - get all items in project first
-  ITEMS=$(gh api graphql -f query='
-    query($org: String!, $num: Int!) {
+  # Get all organization repositories and try to match them to project
+  ALL_REPOS=$(gh api graphql -f query='
+    query($org: String!) {
       organization(login: $org) {
-        projectV2(number: $num) {
-          items(first: 10) {
-            nodes {
-              content {
-                __typename
+        repositories(first: 50) {
+          nodes {
+            name
+            owner { login }
+            languages(first: 5) {
+              edges {
+                size
+                node {
+                  name
+                }
               }
             }
           }
         }
       }
-    }' -f org="$ORG" -F num="$NUM" \
-    --jq '.data.organization.projectV2.items.nodes[]')
+    }' -f org="$ORG" \
+    --jq '.data.organization.repositories.nodes[]')
 
-  echo "DEBUG: All items in project $TITLE: $ITEMS" >&2
-
-  # Look for repositories
-  REPOS=$(echo "$ITEMS" | jq -r 'select(.content.__typename == "Repository") | .content')
-
-  echo "DEBUG: Repository items in project $TITLE: $REPOS" >&2
+  echo "DEBUG: All repos in org: $(echo "$ALL_REPOS" | jq -r '.name' | wc -l)" >&2
 
   REPOS_WITH_LANGS="[]"
-  if [[ -n "$REPOS" && "$REPOS" != "null" && "$REPOS" != "" ]]; then
-    echo "$REPOS" | while read -r repo_content; do
-      # Extract repo info from the content
-      REPO_NAME=$(echo "$repo_content" | jq -r '.name')
-      REPO_OWNER=$(echo "$repo_content" | jq -r '.owner.login')
-      
-      if [[ "$REPO_NAME" != "null" && "$REPO_OWNER" != "null" ]]; then
-        echo "DEBUG: Getting languages for $REPO_OWNER/$REPO_NAME" >&2
-        
-        # Get languages for this repo
-        LANG_DATA=$(gh api repos/"$REPO_OWNER"/"$REPO_NAME"/languages \
-          --jq 'to_entries | map({language: .key, size: .value}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
-        
-        echo "DEBUG: Languages for $REPO_OWNER/$REPO_NAME: $LANG_DATA" >&2
-        
-        if [[ -n "$LANG_DATA" && "$LANG_DATA" != "null" && "$LANG_DATA" != "[]" ]]; then
-          echo "$LANG_DATA" >> "tmp-langs-$NUM.json"
-        fi
-      fi
-    done
+  
+  # Try to match repos to project by name
+  case "$TITLE" in
+    *"React"*)
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("react") or contains("React"))')
+      ;;
+    *"Angular"*)
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("angular") or contains("Angular"))')
+      ;;
+    *"Metrics"*)
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("metrics") or contains("Metrics") or contains("action") or contains("Action"))')
+      ;;
+    *"Demo"*)
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("demo") or contains("Demo") or contains("resume") or contains("Resume"))')
+      ;;
+    *)
+      TARGET_REPOS="[]"
+      ;;
+  esac
+
+  echo "DEBUG: Matched repos for $TITLE: $(echo "$TARGET_REPOS" | jq -r '.name' | wc -l)" >&2
+
+  if [[ "$TARGET_REPOS" != "null" && "$TARGET_REPOS" != "[]" ]]; then
+    # Extract languages from matched repos
+    LANGS_DATA=$(echo "$TARGET_REPOS" | jq '[.languages.edges[] | {language: .node.name, size: .size}] | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
     
-    # Combine all languages for this project
-    if [[ -f "tmp-langs-$NUM.json" ]]; then
-      REPOS_WITH_LANGS=$(cat "tmp-langs-$NUM.json" | jq -s 'flatten | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
-      rm "tmp-langs-$NUM.json"
-    fi
+    REPOS_WITH_LANGS="$LANGS_DATA"
   fi
   
   echo "DEBUG: Final languages for project $TITLE: $REPOS_WITH_LANGS" >&2
