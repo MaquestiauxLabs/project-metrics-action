@@ -4,6 +4,11 @@ set -euo pipefail
 PROJECTS_JSON="all-projects-summary.json"
 REPOS_JSON="all-repos-summary.json"
 
+# Debug: Print JSON structure
+echo "=== DEBUG: Projects JSON structure ===" >&2
+cat "$PROJECTS_JSON" >&2
+echo "=== END DEBUG ===" >&2
+
 # Generate CSS for cards
 cat > metrics.tmp << 'EOF'
 <style>
@@ -90,6 +95,12 @@ cat >> metrics.tmp << 'EOF'
 <div class="metrics-container">
 <h3>📊 Project Overview</h3>
 EOF
+
+# First check if the JSON is valid
+if ! jq empty "$PROJECTS_JSON" 2>/dev/null; then
+  echo "ERROR: Invalid JSON in $PROJECTS_JSON" >&2
+  exit 1
+fi
 
 jq -r '.[] |
   "\(.project // "Unknown")" |
