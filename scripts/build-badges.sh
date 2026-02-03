@@ -33,7 +33,6 @@ cat > metrics.tmp << EOF
 ![Todo](https://img.shields.io/badge/Todo-$total_todo-blue?style=for-the-badge&logo=todoist&logoColor=white) 
 ![In Progress](https://img.shields.io/badge/In%20Progress-$total_ongoing-yellow?style=for-the-badge&logo=gitlab&logoColor=white) 
 ![Done](https://img.shields.io/badge/Done-$total_done-green?style=for-the-badge&logo=checkmarx&logoColor=white)
-
 ![Completion Rate](https://img.shields.io/badge/Completion-${completion_rate}%25-${completion_color}?style=for-the-badge&logo=github&logoColor=white)
 
 ---
