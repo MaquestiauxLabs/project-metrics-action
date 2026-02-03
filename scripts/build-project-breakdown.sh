@@ -27,7 +27,7 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   # Determine project completion color
   if [[ $total -eq 0 ]]; then
     project_color="brightgreen"
-    completion_display="0%25 (clean)"
+    completion_display="0%25%20(clean)"
   elif [[ $completion_pct -ge 80 ]]; then
     project_color="brightgreen"
     completion_display="${completion_pct}%25"

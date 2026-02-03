@@ -20,7 +20,7 @@ fi
 # Determine completion color
 if [[ $total_items -eq 0 ]]; then
   completion_color="brightgreen"
-  completion_display="0%25 (clean)"
+  completion_display="0%25%20(clean)"
 elif [[ $completion_rate -ge 80 ]]; then
   completion_color="brightgreen"
   completion_display="${completion_rate}%25"
