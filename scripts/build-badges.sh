@@ -52,13 +52,12 @@ EOF
 
   # Add progress bar using shields.io
   if [[ $completion_pct -gt 0 ]]; then
-    # Create custom progress bar
-    progress_url="https://img.shields.io/badge/Progress-${completion_pct}%25-${completion_color}?style=for-the-badge&logo=github&logoColor=white"
+    # Create custom progress bar with correct URL format
     cat >> metrics.tmp << EOF
 
 **📈 Progress Tracker**
 
-![Progress](https://progress-bar.dev/${completion_pct}/?title=Completed&width=600&color=brightgreen&suffix=%25)
+![Progress](https://progress-bar.dev/${completion_pct}/?title=Completed&width=600)
 
 EOF
   fi
