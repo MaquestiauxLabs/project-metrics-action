@@ -80,21 +80,36 @@ while IFS="|" read -r NUM TITLE; do
           | select(.content.__typename == "Repository")
           | .content | {name: .name, owner: .owner.login}')
 
+  echo "DEBUG: Repos found for project $TITLE: $REPOS" >&2
+
   REPOS_WITH_LANGS="[]"
-  if [[ -n "$REPOS" ]]; then
-    echo "$REPOS" | while read -r repo_info; do
+  if [[ -n "$REPOS" && "$REPOS" != "null" ]]; then
+    echo "$REPOS" | jq -c '.' | while read -r repo_info; do
       REPO_NAME=$(echo "$repo_info" | jq -r '.name')
       REPO_OWNER=$(echo "$repo_info" | jq -r '.owner')
       
+      echo "DEBUG: Getting languages for $REPO_OWNER/$REPO_NAME" >&2
+      
       # Get languages for this repo
       LANG_DATA=$(gh api repos/"$REPO_OWNER"/"$REPO_NAME"/languages \
-        --jq 'to_entries | map({language: .key, size: .value}) | sort_by(.size) | reverse | .[:3]')
+        --jq 'to_entries | map({language: .key, size: .value}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
       
-      if [[ -n "$LANG_DATA" ]]; then
-        REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS $LANG_DATA" | jq -s 'flatten')
+      echo "DEBUG: Languages for $REPO_OWNER/$REPO_NAME: $LANG_DATA" >&2
+      
+      if [[ -n "$LANG_DATA" && "$LANG_DATA" != "null" ]]; then
+        # Accumulate languages in a temp file
+        echo "$LANG_DATA" >> "tmp-langs-$NUM.json"
       fi
     done
+    
+    # Combine all languages for this project
+    if [[ -f "tmp-langs-$NUM.json" ]]; then
+      REPOS_WITH_LANGS=$(cat "tmp-langs-$NUM.json" | jq -s 'flatten | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
+      rm "tmp-langs-$NUM.json"
+    fi
   fi
+  
+  echo "DEBUG: Final languages for project $TITLE: $REPOS_WITH_LANGS" >&2
 
   REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS" | jq 'group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
 
