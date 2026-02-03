@@ -10,7 +10,7 @@ inputs:
     required: true
   readme_path:
     description: "Path to the README file"
-    default: ".github/profile/README.md"
+    default: "profile/README.md"
 
 runs:
   using: "composite"
