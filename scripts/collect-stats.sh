@@ -61,12 +61,51 @@ while IFS="|" read -r NUM TITLE; do
   T_ONGOING=$((T_ONGOING + P_ONGOING))
   T_DONE=$((T_DONE + P_DONE))
 
+  # Get repositories and their languages for this project
+  REPOS_WITH_LANGS=$(gh api graphql -f query='
+    query($org: String!, $num: Int!) {
+      organization(login: $org) {
+        projectV2(number: $num) {
+          items(first: 100) {
+            nodes {
+              content {
+                __typename
+                ... on Repository {
+                  name
+                  languages(first: 5) {
+                    edges {
+                      size
+                      node {
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }' -f org="$ORG" -F num="$NUM" \
+    --jq '[.data.organization.projectV2.items.nodes[]
+          | select(.content.__typename == "Repository")
+          | .content.languages.edges[]
+          | {language: .node.name, size: .size}]
+          | group_by(.language)
+          | map({
+              language: .[0].language,
+              size: map(.size) | add
+            })
+          | sort_by(.size) | reverse
+          | .[:3]')
+
   jq -n \
     --arg project "$TITLE" \
     --argjson todo "$P_TODO" \
     --argjson ongoing "$P_ONGOING" \
     --argjson done "$P_DONE" \
-    '{project:$project,todo:$todo,ongoing:$ongoing,done:$done}' \
+    --argjson languages "$REPOS_WITH_LANGS" \
+    '{project:$project,todo:$todo,ongoing:$ongoing,done:$done,languages:$languages}' \
     > "project-$NUM-stats.json"
 
 done <<< "$PROJECTS"

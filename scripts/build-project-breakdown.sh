@@ -33,6 +33,9 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
     project_color="orange"
   fi
   
+  # Get project languages
+  languages=$(echo "$project_json" | jq -r '.languages // [] | map(.language) | join(", ")')
+  
   # Add project metrics
   cat >> project-breakdown.tmp << EOF
 ### 🚀 $project
@@ -42,6 +45,37 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
 ![Project Completion](https://img.shields.io/badge/${completion_pct}%25-${project_color}?style=for-the-badge&logo=github&logoColor=white)
 
 EOF
+
+  # Add languages if they exist
+  if [[ "$languages" != "null" && "$languages" != "" ]]; then
+    # Create language badges
+    echo "$languages" | tr ',' '\n' | while read -r lang; do
+      lang=$(echo "$lang" | xargs) # trim whitespace
+      
+      # Language colors
+      lang_color="grey"
+      case "$lang" in
+        "JavaScript") lang_color="yellow" ;;
+        "TypeScript") lang_color="blue" ;;
+        "Python") lang_color="green" ;;
+        "Java") lang_color="orange" ;;
+        "Go") lang_color="cyan" ;;
+        "Rust") lang_color="red" ;;
+        "C++") lang_color="blue" ;;
+        "HTML") lang_color="orange" ;;
+        "CSS") lang_color="purple" ;;
+        "Shell") lang_color="green" ;;
+      esac
+      
+      cat >> project-breakdown.tmp << EOF
+![${lang}](https://img.shields.io/badge/${lang}-${lang_color}?style=flat-square&logo=${lang,,}&logoColor=white) 
+EOF
+    done
+    
+    cat >> project-breakdown.tmp << EOF
+
+EOF
+  fi
 done
 
 cat >> project-breakdown.tmp << EOF
