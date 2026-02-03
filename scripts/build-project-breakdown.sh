@@ -33,8 +33,11 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
     project_color="orange"
   fi
   
-  # Get project languages
+  # Get project languages with debugging
+  languages_json=$(echo "$project_json" | jq '.languages // []')
+  echo "DEBUG: Languages JSON for $project: $languages_json" >&2
   languages=$(echo "$project_json" | jq -r '.languages // [] | map(.language) | join(", ")')
+  echo "DEBUG: Languages string for $project: $languages" >&2
   
   # Add project metrics
   cat >> project-breakdown.tmp << EOF
@@ -75,6 +78,8 @@ EOF
     cat >> project-breakdown.tmp << EOF
 
 EOF
+  else
+    echo "DEBUG: No languages found for $project" >&2
   fi
 done
 
