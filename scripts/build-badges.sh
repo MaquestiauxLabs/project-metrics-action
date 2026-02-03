@@ -28,7 +28,7 @@ fi
 
 # Generate compact global overview
 cat > metrics.tmp << EOF
-## 🎯 MaquestiauxLabs Organization Overview
+## 📊 MaquestiauxLabs Metrics
 
 ![Todo](https://img.shields.io/badge/Todo-$total_todo-blue?style=for-the-badge&logo=todoist&logoColor=white) 
 ![In Progress](https://img.shields.io/badge/In%20Progress-$total_ongoing-yellow?style=for-the-badge&logo=gitlab&logoColor=white) 
