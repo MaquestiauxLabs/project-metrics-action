@@ -75,4 +75,54 @@ jq -n \
   '{total_todo:$todo,total_ongoing:$ongoing,total_closed:$done}' \
   > global-stats.json
 
+# Collect all projects with their repositories
 jq -n '[inputs]' project-*-stats.json > all-projects-summary.json
+
+# Collect repository stats for each project
+rm -f repo-*-stats.json
+
+while IFS="|" read -r NUM TITLE; do
+  # Get repositories linked to this project
+  REPOS=$(gh api graphql -f query='
+    query($org: String!, $num: Int!) {
+      organization(login: $org) {
+        projectV2(number: $num) {
+          items(first: 100) {
+            nodes {
+              content {
+                __typename
+                ... on Repository {
+                  name
+                  owner { login }
+                  issues(states: OPEN) { totalCount }
+                  pullRequests(states: OPEN) { totalCount }
+                  stargazerCount
+                  forkCount
+                }
+              }
+            }
+          }
+        }
+      }
+    }' -f org="$ORG" -F num="$NUM" \
+    --jq '.data.organization.projectV2.items.nodes[]
+          | select(.content.__typename == "Repository")
+          | .content | {
+              name: .name,
+              owner: .owner.login,
+              issues: .issues.totalCount,
+              prs: .pullRequests.totalCount,
+              stars: .stargazerCount,
+              forks: .forkCount
+            }')
+
+  if [[ -n "$REPOS" ]]; then
+    echo "$REPOS" | jq --arg project "$TITLE" '. + {project: $project}' > "repo-$NUM-stats.json"
+  fi
+done <<< "$PROJECTS"
+
+if ls repo-*-stats.json 1> /dev/null 2>&1; then
+  jq -n '[inputs]' repo-*-stats.json > all-repos-summary.json
+else
+  echo '[]' > all-repos-summary.json
+fi

@@ -23,17 +23,17 @@ runs:
         chmod +x "$GITHUB_ACTION_PATH/scripts/"*.sh
         "$GITHUB_ACTION_PATH/scripts/collect-stats.sh" "${{ inputs.org }}"
 
-    - name: Build metrics table
+    - name: Build metrics display
       shell: bash
       run: |
-        "$GITHUB_ACTION_PATH/scripts/build-table.sh"
+        "$GITHUB_ACTION_PATH/scripts/build-cards.sh"
 
     - name: Inject table into README
       shell: bash
       run: |
         mkdir -p "$(dirname \"${{ inputs.readme_path }}\")"
-        if [[ ! -f "table.tmp" ]]; then
-          echo "ERROR: table.tmp not found. Make sure build-table.sh ran successfully."
+        if [[ ! -f "metrics.tmp" ]]; then
+          echo "ERROR: metrics.tmp not found. Make sure build-cards.sh ran successfully."
           exit 1
         fi
         if [[ ! -f "${{ inputs.readme_path }}" ]]; then
