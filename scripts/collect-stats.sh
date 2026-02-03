@@ -81,5 +81,39 @@ jq -n \
 # Collect all projects with their repositories
 jq -n '[inputs]' project-*-stats.json > all-projects-summary.json
 
+# Collect language statistics across the organization
+echo "Collecting language statistics..." >&2
+LANG_STATS=$(gh api graphql -f query='
+  query($org: String!) {
+    organization(login: $org) {
+      repositories(first: 100, privacy: PUBLIC) {
+        nodes {
+          languages(first: 10) {
+            edges {
+              size
+              node {
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }' -f org="$ORG" \
+  --jq '.data.organization.repositories.nodes[]
+        | .languages.edges[]
+        | {language: .node.name, size: .size}')
+
+# Aggregate language stats
+echo "$LANG_STATS" | jq -s '
+  group_by(.language) |
+  map({
+    language: .[0].language,
+    total_bytes: map(.size) | add
+  }) |
+  sort_by(.total_bytes) |
+  reverse
+' > language-stats.json
+
 # Create empty repos file for now - repository stats can be added later
 echo '[]' > all-repos-summary.json
