@@ -46,12 +46,15 @@ while IFS="|" read -r NUM TITLE; do
   RESULT=$(gh api graphql -f query="$QUERY" -f org="$ORG" -F num="$NUM")
 
   P_TODO=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status.name != null) 
     | select(.status.name == "Todo" or .status.name == "Planned")] | length')
 
   P_ONGOING=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status.name != null)
     | select(.status.name == "In Progress" or .status.name == "Ongoing")] | length')
 
   P_DONE=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status.name != null)
     | select(.status.name == "Done" or .status.name == "Complete")] | length')
 
   T_TODO=$((T_TODO + P_TODO))
