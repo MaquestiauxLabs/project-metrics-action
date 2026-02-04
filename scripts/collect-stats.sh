@@ -124,12 +124,13 @@ while IFS="|" read -r NUM TITLE; do
 
   jq -n \
     --arg project "$TITLE" \
+    --argjson number "$NUM" \
     --argjson todo "$P_TODO" \
     --argjson ongoing "$P_ONGOING" \
     --argjson done "$P_DONE" \
     --argjson no_status "$P_NO_STATUS" \
     --argjson languages "$REPOS_WITH_LANGS" \
-    '{project:$project,todo:$todo,ongoing:$ongoing,done:$done,no_status:$no_status,languages:$languages}' \
+    '{project:$project,number:$number,todo:$todo,ongoing:$ongoing,done:$done,no_status:$no_status,languages:$languages}' \
     > "project-$NUM-stats.json"
 
 done <<< "$PROJECTS"

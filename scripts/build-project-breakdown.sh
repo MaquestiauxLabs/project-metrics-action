@@ -4,6 +4,7 @@ set -euo pipefail
 # Source common language utilities
 source "$(dirname "$0")/language-utils.sh"
 
+ORG="$1"
 PROJECTS_JSON="all-projects-summary.json"
 
 # Generate project breakdown
@@ -15,6 +16,7 @@ EOF
 # Process each project
 jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   project=$(echo "$project_json" | jq -r '.project')
+  number=$(echo "$project_json" | jq -r '.number')
   todo=$(echo "$project_json" | jq -r '.todo')
   ongoing=$(echo "$project_json" | jq -r '.ongoing')
   done=$(echo "$project_json" | jq -r '.done')
@@ -35,7 +37,7 @@ jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   
   # Add project metrics using common utilities
   cat >> project-breakdown.tmp << EOF
-### 🚀 $project
+### 🚀 [$project](https://github.com/orgs/$ORG/projects/$number)
 $(generate_all_status_badges "$todo" "$ongoing" "$done" "$no_status" "for-the-badge" "true")
 ![Project Completion]($(generate_completion_badge "$completion_pct" "for-the-badge" "true"))
 

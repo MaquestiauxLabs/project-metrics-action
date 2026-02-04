@@ -26,8 +26,8 @@ runs:
     - name: Build metrics display
       shell: bash
       run: |
-        "$GITHUB_ACTION_PATH/scripts/build-global-overview.sh"
-        "$GITHUB_ACTION_PATH/scripts/build-project-breakdown.sh"
+        "$GITHUB_ACTION_PATH/scripts/build-global-overview.sh" "${{ inputs.org }}"
+        "$GITHUB_ACTION_PATH/scripts/build-project-breakdown.sh" "${{ inputs.org }}"
         "$GITHUB_ACTION_PATH/scripts/build-languages.sh"
         "$GITHUB_ACTION_PATH/scripts/build-last-updated.sh"
 
