@@ -86,7 +86,7 @@ while IFS="|" read -r NUM TITLE; do
     }' -f org="$ORG" \
     --jq '.data.organization.repositories.nodes[]')
 
-  echo "DEBUG: All repos in org: $(echo "$ALL_REPOS" | jq -r '.name' | wc -l)" >&2
+
 
   REPOS_WITH_LANGS="[]"
   
@@ -109,7 +109,7 @@ while IFS="|" read -r NUM TITLE; do
       ;;
   esac
 
-  echo "DEBUG: Matched repos for $TITLE: $(echo "$TARGET_REPOS" | jq -r '.name' | wc -l)" >&2
+
 
   if [[ "$TARGET_REPOS" != "null" && "$TARGET_REPOS" != "[]" ]]; then
     # Extract languages from matched repos
@@ -118,7 +118,7 @@ while IFS="|" read -r NUM TITLE; do
     REPOS_WITH_LANGS="$LANGS_DATA"
   fi
   
-  echo "DEBUG: Final languages for project $TITLE: $REPOS_WITH_LANGS" >&2
+
 
   REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS" | jq 'group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
 
@@ -145,7 +145,6 @@ jq -n \
 jq -n '[inputs]' project-*-stats.json > all-projects-summary.json
 
 # Collect language statistics across the organization
-echo "Collecting language statistics..." >&2
 LANG_STATS=$(gh api graphql -f query='
   query($org: String!) {
     organization(login: $org) {
@@ -178,5 +177,4 @@ echo "$LANG_STATS" | jq -s '
   reverse
 ' > language-stats.json
 
-# Create empty repos file for now - repository stats can be added later
-echo '[]' > all-repos-summary.json
+
