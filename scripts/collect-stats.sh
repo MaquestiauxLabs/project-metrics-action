@@ -2,6 +2,13 @@
 set -euo pipefail
 
 ORG="$1"
+DEBUG="true"
+
+log() {
+  echo "[DEBUG] $1" >&2
+}
+
+log "Starting with org: $ORG"
 
 PROJECTS=$(gh api graphql -f query='
   query($org: String!) {
@@ -21,12 +28,14 @@ PROJECTS=$(gh api graphql -f query='
 PROJECTS=$(echo "$PROJECTS" | grep -v '^$' | head -20)
 
 if [[ -z "$PROJECTS" ]]; then
-  echo "No projects found or API error"
-  echo "[]" > global-stats.json
+  log "No projects found or API error - exiting gracefully"
+  echo '{"total_todo":0,"total_ongoing":0,"total_closed":0}' > global-stats.json
   echo "[]" > all-projects-summary.json
   echo "[]" > language-stats.json
   exit 0
 fi
+
+log "Projects found: $PROJECTS"
 
 T_TODO=0
 T_ONGOING=0
@@ -36,6 +45,9 @@ rm -f project-*-stats.json
 
 while IFS="|" read -r NUM TITLE; do
   [[ -z "$NUM" || -z "$TITLE" ]] && continue
+  
+  log "Processing project: $NUM - $TITLE"
+  
   QUERY='
     query($org: String!, $num: Int!) {
       organization(login: $org) {
@@ -53,9 +65,10 @@ while IFS="|" read -r NUM TITLE; do
       }
     }'
 
-  RESULT=$(gh api graphql -f query="$QUERY" -f org="$ORG" -F num="$NUM") || RESULT="{}"
+  RESULT=$(gh api graphql -f query="$QUERY" -f org="$ORG" -F num="$NUM" 2>/dev/null) || RESULT="{}"
 
   if [[ -z "$RESULT" || "$RESULT" == "{}" ]]; then
+    log "Empty result for project $NUM, skipping"
     continue
   fi
 
@@ -64,6 +77,7 @@ while IFS="|" read -r NUM TITLE; do
   P_DONE=0
   P_NO_STATUS=0
 
+  # Check if we have valid data
   if echo "$RESULT" | jq -e '.data.organization.projectV2.items.nodes' >/dev/null 2>&1; then
     P_TODO=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
       | select(.status != null and .status.name != null) 
@@ -80,6 +94,8 @@ while IFS="|" read -r NUM TITLE; do
     P_NO_STATUS=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
       | select(.status == null or .status.name == null)] | length' 2>/dev/null || echo "0")
   fi
+
+  log "Stats for $TITLE: todo=$P_TODO ongoing=$P_ONGOING done=$P_DONE no_status=$P_NO_STATUS"
 
   T_TODO=$((T_TODO + P_TODO))
   T_ONGOING=$((T_ONGOING + P_ONGOING))
@@ -160,6 +176,9 @@ while IFS="|" read -r NUM TITLE; do
   P_DONE=$(echo "$P_DONE" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
   P_NO_STATUS=$(echo "$P_NO_STATUS" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
 
+  log "Writing JSON for project $TITLE with languages: $REPOS_WITH_LANGS"
+
+  set +e  # Temporarily disable pipefail for jq
   jq -n \
     --arg project "$TITLE" \
     --argjson number "$NUM_INT" \
@@ -170,8 +189,17 @@ while IFS="|" read -r NUM TITLE; do
     --argjson languages "$REPOS_WITH_LANGS" \
     '{project:$project,number:$number,todo:$todo,ongoing:$ongoing,done:$done,no_status:$no_status,languages:$languages}' \
     > "project-$NUM-stats.json"
+  JQ_EXIT=$?
+  set -e
+  
+  if [[ $JQ_EXIT -ne 0 ]]; then
+    log "jq failed for project $TITLE, creating empty file"
+    echo '{"project":"","number":0,"todo":0,"ongoing":0,"done":0,"no_status":0,"languages":[]}' > "project-$NUM-stats.json"
+  fi
 
 done <<< "$PROJECTS"
+
+log "Total: todo=$T_TODO ongoing=$T_ONGOING done=$T_DONE"
 
 jq -n \
   --argjson todo "$T_TODO" \
@@ -216,3 +244,5 @@ if [[ -n "$LANG_STATS" && "$LANG_STATS" != "null" ]]; then
 else
   echo "[]" > language-stats.json
 fi
+
+log "Done"
