@@ -157,6 +157,7 @@ while read -r line; do
   if [[ -n "$NUM" ]]; then
     NUM_INT=$(echo "$NUM" | jq -n 'tonumber(.)' 2>/dev/null) || NUM_INT=0
   fi
+  echo "DEBUG: NUM='$NUM' NUM_INT='$NUM_INT' TITLE='$TITLE'" >&2
 
   P_TODO=$(echo "$P_TODO" | jq -n 'tonumber(.)' 2>/dev/null) || P_TODO=0
   P_ONGOING=$(echo "$P_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null) || P_ONGOING=0
