@@ -18,6 +18,8 @@ PROJECTS=$(gh api graphql -f query='
         | select(.title != ".github")
         | "\(.number)|\(.title)"' 2>/dev/null) || PROJECTS=""
 
+PROJECTS=$(echo "$PROJECTS" | grep -v '^$' | head -20)
+
 if [[ -z "$PROJECTS" ]]; then
   echo "No projects found or API error"
   echo "[]" > global-stats.json
@@ -33,6 +35,7 @@ T_DONE=0
 rm -f project-*-stats.json
 
 while IFS="|" read -r NUM TITLE; do
+  [[ -z "$NUM" || -z "$TITLE" ]] && continue
   QUERY='
     query($org: String!, $num: Int!) {
       organization(login: $org) {
@@ -50,7 +53,16 @@ while IFS="|" read -r NUM TITLE; do
       }
     }'
 
-  RESULT=$(gh api graphql -f query="$QUERY" -f org="$ORG" -F num="$NUM")
+  RESULT=$(gh api graphql -f query="$QUERY" -f org="$ORG" -F num="$NUM") || RESULT="{}"
+
+  if [[ -z "$RESULT" || "$RESULT" == "{}" ]]; then
+    continue
+  fi
+
+  P_TODO=0
+  P_ONGOING=0
+  P_DONE=0
+  P_NO_STATUS=0
 
   if echo "$RESULT" | jq -e '.data.organization.projectV2.items.nodes' >/dev/null 2>&1; then
     P_TODO=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
@@ -67,11 +79,6 @@ while IFS="|" read -r NUM TITLE; do
 
     P_NO_STATUS=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
       | select(.status == null or .status.name == null)] | length' 2>/dev/null || echo "0")
-  else
-    P_TODO=0
-    P_ONGOING=0
-    P_DONE=0
-    P_NO_STATUS=0
   fi
 
   T_TODO=$((T_TODO + P_TODO))
@@ -143,9 +150,19 @@ while IFS="|" read -r NUM TITLE; do
     REPOS_WITH_LANGS="[]"
   fi
 
+  NUM_INT=0
+  if [[ -n "$NUM" ]]; then
+    NUM_INT=$(echo "$NUM" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+  fi
+
+  P_TODO=$(echo "$P_TODO" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+  P_ONGOING=$(echo "$P_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+  P_DONE=$(echo "$P_DONE" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+  P_NO_STATUS=$(echo "$P_NO_STATUS" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+
   jq -n \
     --arg project "$TITLE" \
-    --argjson number "$NUM" \
+    --argjson number "$NUM_INT" \
     --argjson todo "$P_TODO" \
     --argjson ongoing "$P_ONGOING" \
     --argjson done "$P_DONE" \
