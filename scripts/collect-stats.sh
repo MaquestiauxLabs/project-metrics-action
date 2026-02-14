@@ -173,12 +173,16 @@ while IFS="|" read -r NUM TITLE; do
 
 done <<< "$PROJECTS"
 
+T_TODO=$(echo "$T_TODO" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+T_ONGOING=$(echo "$T_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+T_DONE=$(echo "$T_DONE" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+
 jq -n \
   --argjson todo "$T_TODO" \
   --argjson ongoing "$T_ONGOING" \
   --argjson done "$T_DONE" \
   '{total_todo:$todo,total_ongoing:$ongoing,total_closed:$done}' \
-  > global-stats.json
+  > global-stats.json 2>/dev/null || echo '{"total_todo":0,"total_ongoing":0,"total_closed":0}' > global-stats.json
 
 jq -n '[inputs]' project-*-stats.json > all-projects-summary.json 2>/dev/null || echo "[]" > all-projects-summary.json
 
@@ -212,7 +216,7 @@ if [[ -n "$LANG_STATS" && "$LANG_STATS" != "null" ]]; then
     }) |
     sort_by(.total_bytes) |
     reverse
-  ' > language-stats.json
+  ' > language-stats.json 2>/dev/null || echo "[]" > language-stats.json
 else
   echo "[]" > language-stats.json
 fi
