@@ -3,7 +3,6 @@ set -euo pipefail
 
 ORG="$1"
 
-# Fetch projects (exclude ".github")
 PROJECTS=$(gh api graphql -f query='
   query($org: String!) {
     organization(login: $org) {
@@ -17,7 +16,15 @@ PROJECTS=$(gh api graphql -f query='
   }' -f org="$ORG" \
   --jq '.data.organization.projectsV2.nodes[]
         | select(.title != ".github")
-        | "\(.number)|\(.title)"')
+        | "\(.number)|\(.title)"' 2>/dev/null) || PROJECTS=""
+
+if [[ -z "$PROJECTS" ]]; then
+  echo "No projects found or API error"
+  echo "[]" > global-stats.json
+  echo "[]" > all-projects-summary.json
+  echo "[]" > language-stats.json
+  exit 0
+fi
 
 T_TODO=0
 T_ONGOING=0
@@ -45,26 +52,32 @@ while IFS="|" read -r NUM TITLE; do
 
   RESULT=$(gh api graphql -f query="$QUERY" -f org="$ORG" -F num="$NUM")
 
-  P_TODO=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-    | select(.status.name != null) 
-    | select(.status.name == "Todo" or .status.name == "Planned")] | length')
+  if echo "$RESULT" | jq -e '.data.organization.projectV2.items.nodes' >/dev/null 2>&1; then
+    P_TODO=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+      | select(.status != null and .status.name != null) 
+      | select(.status.name == "Todo" or .status.name == "Planned")] | length' 2>/dev/null || echo "0")
 
-  P_ONGOING=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-    | select(.status.name != null)
-    | select(.status.name == "In Progress" or .status.name == "Ongoing")] | length')
+    P_ONGOING=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+      | select(.status != null and .status.name != null)
+      | select(.status.name == "In Progress" or .status.name == "Ongoing")] | length' 2>/dev/null || echo "0")
 
-  P_DONE=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-    | select(.status.name != null)
-    | select(.status.name == "Done" or .status.name == "Complete")] | length')
+    P_DONE=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+      | select(.status != null and .status.name != null)
+      | select(.status.name == "Done" or .status.name == "Complete")] | length' 2>/dev/null || echo "0")
 
-  P_NO_STATUS=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-    | select(.status.name == null)] | length')
+    P_NO_STATUS=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+      | select(.status == null or .status.name == null)] | length' 2>/dev/null || echo "0")
+  else
+    P_TODO=0
+    P_ONGOING=0
+    P_DONE=0
+    P_NO_STATUS=0
+  fi
 
   T_TODO=$((T_TODO + P_TODO))
   T_ONGOING=$((T_ONGOING + P_ONGOING))
   T_DONE=$((T_DONE + P_DONE))
 
-  # Get all organization repositories and try to match them to project
   ALL_REPOS=$(gh api graphql -f query='
     query($org: String!) {
       organization(login: $org) {
@@ -84,45 +97,41 @@ while IFS="|" read -r NUM TITLE; do
         }
       }
     }' -f org="$ORG" \
-    --jq '.data.organization.repositories.nodes[]')
-
-
+    --jq '.data.organization.repositories.nodes[]' 2>/dev/null) || ALL_REPOS=""
 
   REPOS_WITH_LANGS="[]"
   
-  # Try to match repos to project by name
-  case "$TITLE" in
-    *"React"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("react") or contains("React"))' 2>/dev/null || echo "[]")
-      ;;
-    *"Angular"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("angular") or contains("Angular"))' 2>/dev/null || echo "[]")
-      ;;
-    *"Metrics"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("metrics") or contains("Metrics") or contains("action") or contains("Action"))' 2>/dev/null || echo "[]")
-      ;;
-    *"Demo"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("demo") or contains("Demo") or contains("resume") or contains("Resume"))' 2>/dev/null || echo "[]")
-      ;;
-    *)
-      TARGET_REPOS="[]"
-      ;;
-  esac
+  if [[ -n "$ALL_REPOS" && "$ALL_REPOS" != "null" ]]; then
+    case "$TITLE" in
+      *"React"*)
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("react"; "i"))' 2>/dev/null || echo "[]")
+        ;;
+      *"Angular"*)
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("angular"; "i"))' 2>/dev/null || echo "[]")
+        ;;
+      *"Metrics"*)
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("metrics|action"; "i"))' 2>/dev/null || echo "[]")
+        ;;
+      *"Demo"*)
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("demo|resume"; "i"))' 2>/dev/null || echo "[]")
+        ;;
+      *)
+        TARGET_REPOS="[]"
+        ;;
+    esac
 
-  if [[ -z "$TARGET_REPOS" || "$TARGET_REPOS" == "null" || "$TARGET_REPOS" == "[]" ]]; then
-    REPOS_WITH_LANGS="[]"
-  else
-    # Extract languages from matched repos
-    LANGS_DATA=$(echo "$TARGET_REPOS" | jq '[.languages.edges[] | {language: .node.name, size: .size}] | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
-    
-    if [[ -z "$LANGS_DATA" || "$LANGS_DATA" == "null" ]]; then
+    if [[ -z "$TARGET_REPOS" || "$TARGET_REPOS" == "null" || "$TARGET_REPOS" == "[]" ]]; then
       REPOS_WITH_LANGS="[]"
     else
-      REPOS_WITH_LANGS="$LANGS_DATA"
+      LANGS_DATA=$(echo "$TARGET_REPOS" | jq '[.languages.edges[]? // [] | {language: .node.name, size: .size}] | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
+      
+      if [[ -z "$LANGS_DATA" || "$LANGS_DATA" == "null" ]]; then
+        REPOS_WITH_LANGS="[]"
+      else
+        REPOS_WITH_LANGS="$LANGS_DATA"
+      fi
     fi
   fi
-  
-
 
   if [[ -z "$REPOS_WITH_LANGS" || "$REPOS_WITH_LANGS" == "null" ]]; then
     REPOS_WITH_LANGS="[]"
@@ -154,10 +163,8 @@ jq -n \
   '{total_todo:$todo,total_ongoing:$ongoing,total_closed:$done}' \
   > global-stats.json
 
-# Collect all projects with their repositories
-jq -n '[inputs]' project-*-stats.json > all-projects-summary.json
+jq -n '[inputs]' project-*-stats.json > all-projects-summary.json 2>/dev/null || echo "[]" > all-projects-summary.json
 
-# Collect language statistics across the organization
 LANG_STATS=$(gh api graphql -f query='
   query($org: String!) {
     organization(login: $org) {
@@ -177,17 +184,18 @@ LANG_STATS=$(gh api graphql -f query='
   }' -f org="$ORG" \
   --jq '.data.organization.repositories.nodes[]
         | .languages.edges[]
-        | {language: .node.name, size: .size}')
+        | {language: .node.name, size: .size}' 2>/dev/null) || LANG_STATS=""
 
-# Aggregate language stats
-echo "$LANG_STATS" | jq -s '
-  group_by(.language) |
-  map({
-    language: .[0].language,
-    total_bytes: map(.size) | add
-  }) |
-  sort_by(.total_bytes) |
-  reverse
-' > language-stats.json
-
-
+if [[ -n "$LANG_STATS" && "$LANG_STATS" != "null" ]]; then
+  echo "$LANG_STATS" | jq -s '
+    group_by(.language) |
+    map({
+      language: .[0].language,
+      total_bytes: map(.size) | add
+    }) |
+    sort_by(.total_bytes) |
+    reverse
+  ' > language-stats.json
+else
+  echo "[]" > language-stats.json
+fi
