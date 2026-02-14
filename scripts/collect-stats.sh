@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 ORG="$1"
 
@@ -33,8 +32,11 @@ T_DONE=0
 
 rm -f project-*-stats.json
 
+set +e
 while IFS="|" read -r NUM TITLE; do
-  [[ -z "$NUM" || -z "$TITLE" ]] && continue
+  if [[ -z "$NUM" || -z "$TITLE" ]]; then
+    continue
+  fi
   
   QUERY='
     query($org: String!, $num: Int!) {
@@ -55,7 +57,7 @@ while IFS="|" read -r NUM TITLE; do
 
   RESULT=$(gh api graphql -f query="$QUERY" -f org="$ORG" -F num="$NUM" 2>/dev/null) || RESULT="{}"
 
-  if [[ -z "$RESULT" || "$RESULT" == "{}" ]]; then
+  if [[ -z "$RESULT" || "$RESULT" == "{}" || "$RESULT" == "null" ]]; then
     continue
   fi
 
@@ -64,22 +66,20 @@ while IFS="|" read -r NUM TITLE; do
   P_DONE=0
   P_NO_STATUS=0
 
-  if echo "$RESULT" | jq -e '.data.organization.projectV2.items.nodes' >/dev/null 2>&1; then
-    P_TODO=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-      | select(.status != null and .status.name != null) 
-      | select(.status.name == "Todo" or .status.name == "Planned")] | length' 2>/dev/null || echo "0")
+  P_TODO=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status != null and .status.name != null) 
+    | select(.status.name == "Todo" or .status.name == "Planned")] | length' 2>/dev/null) || P_TODO=0
 
-    P_ONGOING=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-      | select(.status != null and .status.name != null)
-      | select(.status.name == "In Progress" or .status.name == "Ongoing")] | length' 2>/dev/null || echo "0")
+  P_ONGOING=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status != null and .status.name != null)
+    | select(.status.name == "In Progress" or .status.name == "Ongoing")] | length' 2>/dev/null) || P_ONGOING=0
 
-    P_DONE=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-      | select(.status != null and .status.name != null)
-      | select(.status.name == "Done" or .status.name == "Complete")] | length' 2>/dev/null || echo "0")
+  P_DONE=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status != null and .status.name != null)
+    | select(.status.name == "Done" or .status.name == "Complete")] | length' 2>/dev/null) || P_DONE=0
 
-    P_NO_STATUS=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
-      | select(.status == null or .status.name == null)] | length' 2>/dev/null || echo "0")
-  fi
+  P_NO_STATUS=$(echo "$RESULT" | jq '[.data.organization.projectV2.items.nodes[]
+    | select(.status == null or .status.name == null)] | length' 2>/dev/null) || P_NO_STATUS=0
 
   T_TODO=$((T_TODO + P_TODO))
   T_ONGOING=$((T_ONGOING + P_ONGOING))
@@ -111,28 +111,28 @@ while IFS="|" read -r NUM TITLE; do
   if [[ -n "$ALL_REPOS" && "$ALL_REPOS" != "null" ]]; then
     case "$TITLE" in
       *"React"*)
-        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("react"; "i"))' 2>/dev/null || echo "[]")
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("react"; "i"))' 2>/dev/null) || TARGET_REPOS="[]"
         ;;
       *"Angular"*)
-        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("angular"; "i"))' 2>/dev/null || echo "[]")
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("angular"; "i"))' 2>/dev/null) || TARGET_REPOS="[]"
         ;;
       *"Metrics"*)
-        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("metrics|action"; "i"))' 2>/dev/null || echo "[]")
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("metrics|action"; "i"))' 2>/dev/null) || TARGET_REPOS="[]"
         ;;
       *"Demo"*)
-        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("demo|resume"; "i"))' 2>/dev/null || echo "[]")
+        TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | test("demo|resume"; "i"))' 2>/dev/null) || TARGET_REPOS="[]"
         ;;
       *)
         TARGET_REPOS="[]"
         ;;
     esac
 
-    if [[ -z "$TARGET_REPOS" || "$TARGET_REPOS" == "null" || "$TARGET_REPOS" == "[]" ]]; then
+    if [[ -z "$TARGET_REPOS" || "$TARGET_REPOS" == "null" || "$TARGET_REPOS" == "[]" || "$TARGET_REPOS" == "" ]]; then
       REPOS_WITH_LANGS="[]"
     else
       LANGS_DATA=$(echo "$TARGET_REPOS" | jq -c '[.languages.edges[]? // [] | {language: .node.name, size: .size}] | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null)
       
-      if [[ -z "$LANGS_DATA" || "$LANGS_DATA" == "null" ]]; then
+      if [[ -z "$LANGS_DATA" || "$LANGS_DATA" == "null" || "$LANGS_DATA" == "" ]]; then
         REPOS_WITH_LANGS="[]"
       else
         REPOS_WITH_LANGS="$LANGS_DATA"
@@ -140,25 +140,25 @@ while IFS="|" read -r NUM TITLE; do
     fi
   fi
 
-  if [[ -z "$REPOS_WITH_LANGS" || "$REPOS_WITH_LANGS" == "null" ]]; then
+  if [[ -z "$REPOS_WITH_LANGS" || "$REPOS_WITH_LANGS" == "null" || "$REPOS_WITH_LANGS" == "" ]]; then
     REPOS_WITH_LANGS="[]"
   else
     REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS" | jq -c 'group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
   fi
 
-  if [[ -z "$REPOS_WITH_LANGS" || "$REPOS_WITH_LANGS" == "null" ]]; then
+  if [[ -z "$REPOS_WITH_LANGS" || "$REPOS_WITH_LANGS" == "null" || "$REPOS_WITH_LANGS" == "" ]]; then
     REPOS_WITH_LANGS="[]"
   fi
 
   NUM_INT=0
   if [[ -n "$NUM" ]]; then
-    NUM_INT=$(echo "$NUM" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+    NUM_INT=$(echo "$NUM" | jq -n 'tonumber(.)' 2>/dev/null) || NUM_INT=0
   fi
 
-  P_TODO=$(echo "$P_TODO" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
-  P_ONGOING=$(echo "$P_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
-  P_DONE=$(echo "$P_DONE" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
-  P_NO_STATUS=$(echo "$P_NO_STATUS" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+  P_TODO=$(echo "$P_TODO" | jq -n 'tonumber(.)' 2>/dev/null) || P_TODO=0
+  P_ONGOING=$(echo "$P_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null) || P_ONGOING=0
+  P_DONE=$(echo "$P_DONE" | jq -n 'tonumber(.)' 2>/dev/null) || P_DONE=0
+  P_NO_STATUS=$(echo "$P_NO_STATUS" | jq -n 'tonumber(.)' 2>/dev/null) || P_NO_STATUS=0
 
   jq -n \
     --arg project "$TITLE" \
@@ -169,13 +169,14 @@ while IFS="|" read -r NUM TITLE; do
     --argjson no_status "$P_NO_STATUS" \
     --argjson languages "$REPOS_WITH_LANGS" \
     '{project:$project,number:$number,todo:$todo,ongoing:$ongoing,done:$done,no_status:$no_status,languages:$languages}' \
-    > "project-$NUM-stats.json"
+    > "project-$NUM-stats.json" 2>/dev/null || echo '{"project":"","number":0,"todo":0,"ongoing":0,"done":0,"no_status":0,"languages":[]}' > "project-$NUM-stats.json"
 
 done <<< "$PROJECTS"
+set -e
 
-T_TODO=$(echo "$T_TODO" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
-T_ONGOING=$(echo "$T_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
-T_DONE=$(echo "$T_DONE" | jq -n 'tonumber(.)' 2>/dev/null || echo "0")
+T_TODO=$(echo "$T_TODO" | jq -n 'tonumber(.)' 2>/dev/null) || T_TODO=0
+T_ONGOING=$(echo "$T_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null) || T_ONGOING=0
+T_DONE=$(echo "$T_DONE" | jq -n 'tonumber(.)' 2>/dev/null) || T_DONE=0
 
 jq -n \
   --argjson todo "$T_TODO" \
@@ -207,7 +208,7 @@ LANG_STATS=$(gh api graphql -f query='
         | .languages.edges[]
         | {language: .node.name, size: .size}' 2>/dev/null) || LANG_STATS=""
 
-if [[ -n "$LANG_STATS" && "$LANG_STATS" != "null" ]]; then
+if [[ -n "$LANG_STATS" && "$LANG_STATS" != "null" && "$LANG_STATS" != "" ]]; then
   echo "$LANG_STATS" | jq -s '
     group_by(.language) |
     map({
