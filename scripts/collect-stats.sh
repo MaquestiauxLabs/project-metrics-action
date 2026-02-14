@@ -93,34 +93,46 @@ while IFS="|" read -r NUM TITLE; do
   # Try to match repos to project by name
   case "$TITLE" in
     *"React"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("react") or contains("React"))')
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("react") or contains("React"))' 2>/dev/null || echo "[]")
       ;;
     *"Angular"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("angular") or contains("Angular"))')
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("angular") or contains("Angular"))' 2>/dev/null || echo "[]")
       ;;
     *"Metrics"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("metrics") or contains("Metrics") or contains("action") or contains("Action"))')
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("metrics") or contains("Metrics") or contains("action") or contains("Action"))' 2>/dev/null || echo "[]")
       ;;
     *"Demo"*)
-      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("demo") or contains("Demo") or contains("resume") or contains("Resume"))')
+      TARGET_REPOS=$(echo "$ALL_REPOS" | jq 'select(.name | contains("demo") or contains("Demo") or contains("resume") or contains("Resume"))' 2>/dev/null || echo "[]")
       ;;
     *)
       TARGET_REPOS="[]"
       ;;
   esac
 
-
-
-  if [[ "$TARGET_REPOS" != "null" && "$TARGET_REPOS" != "[]" ]]; then
+  if [[ -z "$TARGET_REPOS" || "$TARGET_REPOS" == "null" || "$TARGET_REPOS" == "[]" ]]; then
+    REPOS_WITH_LANGS="[]"
+  else
     # Extract languages from matched repos
-    LANGS_DATA=$(echo "$TARGET_REPOS" | jq '[.languages.edges[] | {language: .node.name, size: .size}] | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
+    LANGS_DATA=$(echo "$TARGET_REPOS" | jq '[.languages.edges[] | {language: .node.name, size: .size}] | group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
     
-    REPOS_WITH_LANGS="$LANGS_DATA"
+    if [[ -z "$LANGS_DATA" || "$LANGS_DATA" == "null" ]]; then
+      REPOS_WITH_LANGS="[]"
+    else
+      REPOS_WITH_LANGS="$LANGS_DATA"
+    fi
   fi
   
 
 
-  REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS" | jq 'group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]')
+  if [[ -z "$REPOS_WITH_LANGS" || "$REPOS_WITH_LANGS" == "null" ]]; then
+    REPOS_WITH_LANGS="[]"
+  else
+    REPOS_WITH_LANGS=$(echo "$REPOS_WITH_LANGS" | jq 'group_by(.language) | map({language: .[0].language, size: (map(.size) | add)}) | sort_by(.size) | reverse | .[:3]' 2>/dev/null || echo "[]")
+  fi
+
+  if [[ -z "$REPOS_WITH_LANGS" || "$REPOS_WITH_LANGS" == "null" ]]; then
+    REPOS_WITH_LANGS="[]"
+  fi
 
   jq -n \
     --arg project "$TITLE" \
