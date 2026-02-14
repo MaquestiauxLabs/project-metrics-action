@@ -153,10 +153,7 @@ while read -r line; do
     REPOS_WITH_LANGS="[]"
   fi
 
-  NUM_INT=0
-  if [[ -n "$NUM" ]]; then
-    NUM_INT=$(echo "$NUM" | jq -n 'tonumber(.)' 2>/dev/null) || NUM_INT=0
-  fi
+  NUM_INT="$NUM"
   echo "DEBUG: NUM='$NUM' NUM_INT='$NUM_INT' TITLE='$TITLE'" >&2
 
   P_TODO=$(echo "$P_TODO" | jq -n 'tonumber(.)' 2>/dev/null) || P_TODO=0
@@ -166,7 +163,7 @@ while read -r line; do
 
   jq -n \
     --arg project "$TITLE" \
-    --argjson number "$NUM_INT" \
+    --arg number "$NUM_INT" \
     --argjson todo "$P_TODO" \
     --argjson ongoing "$P_ONGOING" \
     --argjson done "$P_DONE" \
