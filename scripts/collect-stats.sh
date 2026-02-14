@@ -19,6 +19,8 @@ PROJECTS=$(gh api graphql -f query='
 
 PROJECTS=$(echo "$PROJECTS" | grep -v '^$' | head -20)
 
+PROJECTS=$(echo "$PROJECTS" | sort -t'@' -k2)
+
 if [[ -z "$PROJECTS" ]]; then
   echo '{"total_todo":0,"total_ongoing":0,"total_closed":0}' > global-stats.json
   echo "[]" > all-projects-summary.json
