@@ -154,12 +154,6 @@ while read -r line; do
   fi
 
   NUM_INT="$NUM"
-  echo "DEBUG: NUM='$NUM' NUM_INT='$NUM_INT' TITLE='$TITLE'" >&2
-
-  P_TODO=$(echo "$P_TODO" | jq -n 'tonumber(.)' 2>/dev/null) || P_TODO=0
-  P_ONGOING=$(echo "$P_ONGOING" | jq -n 'tonumber(.)' 2>/dev/null) || P_ONGOING=0
-  P_DONE=$(echo "$P_DONE" | jq -n 'tonumber(.)' 2>/dev/null) || P_DONE=0
-  P_NO_STATUS=$(echo "$P_NO_STATUS" | jq -n 'tonumber(.)' 2>/dev/null) || P_NO_STATUS=0
 
   jq -n \
     --arg project "$TITLE" \
