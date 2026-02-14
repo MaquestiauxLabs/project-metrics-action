@@ -16,7 +16,7 @@ EOF
 # Process each project
 jq -c '.[]' "$PROJECTS_JSON" | while read -r project_json; do
   project=$(echo "$project_json" | jq -r '.project')
-  number=$(echo "$project_json" | jq -r '.number')
+  number=$(echo "$project_json" | jq -r '.number | if . == null then "0" else . | tostring end')
   todo=$(echo "$project_json" | jq -r '.todo')
   ongoing=$(echo "$project_json" | jq -r '.ongoing')
   done=$(echo "$project_json" | jq -r '.done')
