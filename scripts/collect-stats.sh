@@ -182,7 +182,7 @@ jq -n \
 
 jq -n '[inputs]' project-*-stats.json > all-projects-summary.json 2>/dev/null || echo "[]" > all-projects-summary.json
 
-jq -s 'sort_by(.project | ascii_downcase)' all-projects-summary.json > all-projects-summary.json.tmp && mv all-projects-summary.json.tmp all-projects-summary.json
+jq 'sort_by(.project | ascii_downcase)' all-projects-summary.json > all-projects-summary.json.tmp && mv all-projects-summary.json.tmp all-projects-summary.json
 
 LANG_STATS=$(gh api graphql -f query='
   query($org: String!) {
