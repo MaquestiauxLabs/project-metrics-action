@@ -15,7 +15,7 @@ PROJECTS=$(gh api graphql -f query='
   }' -f org="$ORG" \
   --jq '.data.organization.projectsV2.nodes[]
         | select(.title != ".github")
-        | "\(.number)|\(.title)"' 2>/dev/null) || PROJECTS=""
+        | "\(.number)@@@\(.title)"' 2>/dev/null) || PROJECTS=""
 
 PROJECTS=$(echo "$PROJECTS" | grep -v '^$' | head -20)
 
@@ -33,7 +33,10 @@ T_DONE=0
 rm -f project-*-stats.json
 
 set +e
-while IFS="|" read -r NUM TITLE; do
+while read -r line; do
+  NUM="${line%%@@@*}"
+  TITLE="${line#*@@@}"
+  [[ -z "$NUM" || -z "$TITLE" ]] && continue
   if [[ -z "$NUM" || -z "$TITLE" ]]; then
     continue
   fi
