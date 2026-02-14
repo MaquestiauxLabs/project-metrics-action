@@ -17,7 +17,7 @@ PROJECTS=$(gh api graphql -f query='
         | select(.title != ".github")
         | "\(.number)@@@\(.title)"' 2>/dev/null) || PROJECTS=""
 
-PROJECTS=$(echo "$PROJECTS" | grep -v '^$' | head -20 | sort -t'@' -k2)
+PROJECTS=$(echo "$PROJECTS" | grep -v '^$' | head -20)
 
 if [[ -z "$PROJECTS" ]]; then
   echo '{"total_todo":0,"total_ongoing":0,"total_closed":0}' > global-stats.json
@@ -181,6 +181,8 @@ jq -n \
   > global-stats.json 2>/dev/null || echo '{"total_todo":0,"total_ongoing":0,"total_closed":0}' > global-stats.json
 
 jq -n '[inputs]' project-*-stats.json > all-projects-summary.json 2>/dev/null || echo "[]" > all-projects-summary.json
+
+jq -s 'sort_by(.project)' all-projects-summary.json > all-projects-summary.json.tmp && mv all-projects-summary.json.tmp all-projects-summary.json
 
 LANG_STATS=$(gh api graphql -f query='
   query($org: String!) {
