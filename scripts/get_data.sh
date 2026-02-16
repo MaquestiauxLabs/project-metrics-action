@@ -83,6 +83,14 @@ RAW_RESPONSE=$(gh api graphql -f query='query($org: String!) {
             issues { totalCount }
             openIssues: issues(states: OPEN) { totalCount }
             closedIssues: issues(states: CLOSED) { totalCount }
+            languages(first: 5) {
+              edges {
+                size
+                node {
+                  name
+                }
+              }
+            }
           }
         }
       }
