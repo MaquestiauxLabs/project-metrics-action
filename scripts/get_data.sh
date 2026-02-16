@@ -27,6 +27,32 @@ RAW_RESPONSE=$(gh api graphql -f query='query($org: String!) {
         creator {
           login
         }
+        statusField: field(name: "Status") {
+          ... on ProjectV2SingleSelectField {
+            options {
+              id
+              name
+              color
+            }
+          }
+        }
+        repositories(first: 10) {
+            nodes {
+                id
+                name
+                nameWithOwner
+                url
+                issues {
+                    totalCount
+                }
+                openIssues: issues(states: OPEN) {
+                    totalCount
+                }
+                closedIssues: issues(states: CLOSED) {
+                    totalCount
+                }
+            }
+        }
       }
     }
   }
