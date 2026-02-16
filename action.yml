@@ -1,5 +1,5 @@
 name: "Org Project Metrics"
-description: "Collect GitHub Projects v2 stats and inject a metrics table into a README"
+description: "Collect GitHub Projects v2 stats and inject metrics into README"
 
 inputs:
   org:
@@ -11,48 +11,40 @@ inputs:
   readme_path:
     description: "Path to the README file"
     default: "profile/README.md"
+  template_path:
+    description: "Path to the README template (default: sample-README.md in action)"
+    default: "sample-README.md"
 
 runs:
   using: "composite"
   steps:
-    - name: Collect project stats
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install jq
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y jq
+
+    - name: Collect project data
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        chmod +x "$GITHUB_ACTION_PATH/scripts/"*.sh
-        "$GITHUB_ACTION_PATH/scripts/collect-stats.sh" "${{ inputs.org }}"
+        chmod +x "$GITHUB_ACTION_PATH/scripts/get_data.sh"
+        "$GITHUB_ACTION_PATH/scripts/get_data.sh" "${{ inputs.org }}" "$GITHUB_WORKSPACE/data/projects.json"
 
-    - name: Build metrics display
+    - name: Generate README
       shell: bash
       run: |
-        "$GITHUB_ACTION_PATH/scripts/build-global-overview.sh" "${{ inputs.org }}"
-        "$GITHUB_ACTION_PATH/scripts/build-project-breakdown.sh" "${{ inputs.org }}"
-        "$GITHUB_ACTION_PATH/scripts/build-languages.sh"
-        "$GITHUB_ACTION_PATH/scripts/build-last-updated.sh"
-
-    - name: Inject sections into README
-      shell: bash
-      run: |
-        mkdir -p "$(dirname \"${{ inputs.readme_path }}\")"
+        chmod +x "$GITHUB_ACTION_PATH/scripts/update_readme.sh"
         
-        # Check required temp files exist
-        for file in "global-overview.tmp" "project-breakdown.tmp" "languages.tmp" "last-updated.tmp"; do
-          if [[ ! -f "$file" ]]; then
-            echo "ERROR: $file not found. Build scripts may have failed."
-            exit 1
-          fi
-        done
-        
-        if [[ ! -f "${{ inputs.readme_path }}" ]]; then
-          echo "ERROR: README file not found at ${{ inputs.readme_path }}"
-          exit 1
+        if [[ "${{ inputs.template_path }}" == "sample-README.md" ]]; then
+          TEMPLATE="$GITHUB_ACTION_PATH/sample-README.md"
+        else
+          TEMPLATE="$GITHUB_WORKSPACE/${{ inputs.template_path }}"
         fi
         
-        # Inject all sections
-        awk -f "$GITHUB_ACTION_PATH/scripts/inject-global-overview.awk" "${{ inputs.readme_path }}" > "${{ inputs.readme_path }}.tmp" && \
-        awk -f "$GITHUB_ACTION_PATH/scripts/inject-project-breakdown.awk" "${{ inputs.readme_path }}.tmp" > "${{ inputs.readme_path }}.new" && \
-        awk -f "$GITHUB_ACTION_PATH/scripts/inject-languages.awk" "${{ inputs.readme_path }}.new" > "${{ inputs.readme_path }}.tmp" && \
-        awk -f "$GITHUB_ACTION_PATH/scripts/inject-last-updated.awk" "${{ inputs.readme_path }}.tmp" > "${{ inputs.readme_path }}.new"
-        
-        mv "${{ inputs.readme_path }}.new" "${{ inputs.readme_path }}"
+        "$GITHUB_ACTION_PATH/scripts/update_readme.sh" \
+          "$GITHUB_WORKSPACE/data/projects.json" \
+          "$TEMPLATE" \
+          "$GITHUB_WORKSPACE/${{ inputs.readme_path }}"
