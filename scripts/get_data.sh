@@ -94,7 +94,13 @@ if [[ -z "$RAW_RESPONSE" ]]; then
 	exit 0
 fi
 
-echo "$RAW_RESPONSE" | jq '(.data.organization.projectsV2.nodes // []) | sort_by(.title // "")' > "$OUT_PATH"
+echo "$RAW_RESPONSE" | jq '(.data.organization.projectsV2.nodes // []) | sort_by(.title // "") | map(
+  . as $proj
+  | .statusCounts = ($proj.items.nodes | map(.status.name // "Unassigned") | group_by(.) | map({key: .[0], value: length}) | from_entries)
+  | .statusCounts = (($proj.statusField.options // []) | map(.name) | map({(.): 0}) | add) * .statusCounts
+  | .statusCounts.Total = ([.statusCounts[]] | add)
+  | del(.statusField)
+)' > "$OUT_PATH"
 
 if [[ ! -s "$OUT_PATH" ]]; then
 	echo "[]" > "$OUT_PATH"
