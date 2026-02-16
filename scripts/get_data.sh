@@ -13,6 +13,10 @@ echo "Fetching projects for organization: $ORG"
 
 RAW_RESPONSE=$(gh api graphql -f query='query($org: String!) {
   organization(login: $org) {
+    name
+    description
+    location
+    avatarUrl,
     projectsV2(first: 20) {
       nodes {
         id
@@ -89,18 +93,24 @@ RAW_RESPONSE=$(gh api graphql -f query='query($org: String!) {
 mkdir -p "$(dirname "$OUT_PATH")"
 
 if [[ -z "$RAW_RESPONSE" ]]; then
-	echo "[]" > "$OUT_PATH"
-	echo "No data returned; wrote empty array to $OUT_PATH"
+	echo '{"organisationName": "", "organisationDescription": "", "organisationLocation": "", "projects": []}' > "$OUT_PATH"
+	echo "No data returned; wrote empty object to $OUT_PATH"
 	exit 0
 fi
 
-echo "$RAW_RESPONSE" | jq '(.data.organization.projectsV2.nodes // []) | sort_by(.title // "") | map(
-  . as $proj
-  | .statusCounts = ($proj.items.nodes | map(.status.name // "Unassigned") | group_by(.) | map({key: .[0], value: length}) | from_entries)
-  | .statusCounts = (($proj.statusField.options // []) | map(.name) | map({(.): 0}) | add) * .statusCounts
-  | .statusCounts.Total = ([.statusCounts[]] | add)
-  | del(.statusField)
-)' > "$OUT_PATH"
+echo "$RAW_RESPONSE" | jq '{
+  organisationName: .data.organization.name,
+  organisationDescription: .data.organization.description,
+  organisationLocation: .data.organization.location,
+  organisationAvatar: .data.organization.avatarUrl,
+  projects: (.data.organization.projectsV2.nodes // [] | sort_by(.title // "") | map(
+    . as $proj
+    | .statusCounts = ($proj.items.nodes | map(.status.name // "Unassigned") | group_by(.) | map({key: .[0], value: length}) | from_entries)
+    | .statusCounts = (($proj.statusField.options // []) | map(.name) | map({(.): 0}) | add) * .statusCounts
+    | .statusCounts.Total = ([.statusCounts[]] | add)
+    | del(.statusField)
+  ))
+}' > "$OUT_PATH"
 
 if [[ ! -s "$OUT_PATH" ]]; then
 	echo "[]" > "$OUT_PATH"
