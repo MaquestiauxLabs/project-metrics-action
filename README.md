@@ -15,6 +15,23 @@ The action fetches data from your organization's GitHub Projects v2, analyzes pr
 
 ## Usage
 
+### CLI
+
+```bash
+# Fetch project data
+./scripts/get_data.sh <org> [output_path]
+
+# Generate README from template
+./scripts/update_readme.sh <data_path> <template_path> <output_path>
+```
+
+Example:
+
+```bash
+./scripts/get_data.sh MyOrg
+./scripts/update_readme.sh data/projects.json sample-README.md data/README.md
+```
+
 ### Basic Setup
 
 1. **Add to Workflow**: Create `.github/workflows/metrics.yml`:
@@ -24,7 +41,7 @@ name: Update Project Metrics
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: "0 */6 * * *" # Every 6 hours
   workflow_dispatch:
 
 jobs:
@@ -71,6 +88,7 @@ jobs:
 ### Outputs
 
 The action generates:
+
 - **Global Overview**: Total tasks by status across all projects
 - **Project Breakdown**: Individual project status with completion rates
 - **Language Statistics**: Top programming languages by usage
@@ -79,6 +97,7 @@ The action generates:
 ## Project Matching
 
 The action automatically matches repositories to projects using name patterns:
+
 - Projects with "React" → repositories containing "react"
 - Projects with "Angular" → repositories containing "angular"
 - Projects with "Metrics" → repositories containing "metrics" or "action"
@@ -87,6 +106,7 @@ The action automatically matches repositories to projects using name patterns:
 ## Development
 
 This action is built with:
+
 - **Bash** scripts for data collection and processing
 - **AWK** scripts for README template injection
 - **GitHub CLI** for API interactions
