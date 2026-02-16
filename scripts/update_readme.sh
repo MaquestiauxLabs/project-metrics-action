@@ -117,13 +117,18 @@ GLOBAL_OVERVIEW+="![Completion](https://img.shields.io/badge/Completion-$complet
 PROJECT_BREAKDOWN=""
 
 while read -r title; do
-    read -r total; read -r done; read -r inProgress; read -r todo; read -r rate
+    read -r url; read -r total; read -r done; read -r inProgress; read -r todo; read -r rate
     
     completion_color="lightgrey"
     if [[ $rate -ge 80 ]]; then completion_color="green"; elif [[ $rate -ge 50 ]]; then completion_color="yellow"; elif [[ $rate -gt 0 ]]; then completion_color="orange"; fi
     
-    PROJECT_BREAKDOWN+="### 🚀 $title
+    if [[ -n "$url" && "$url" != "null" ]]; then
+        PROJECT_BREAKDOWN+="### 🚀 [$title]($url)
 "
+    else
+        PROJECT_BREAKDOWN+="### 🚀 $title
+"
+    fi
     PROJECT_BREAKDOWN+="![Total](https://img.shields.io/badge/Total-$total-blue?style=for-the-badge) "
     PROJECT_BREAKDOWN+="![Done](https://img.shields.io/badge/Done-$done-green?style=for-the-badge) "
     PROJECT_BREAKDOWN+="![In Progress](https://img.shields.io/badge/In%20Progress-$inProgress-yellow?style=for-the-badge) "
@@ -156,13 +161,13 @@ while read -r title; do
 "
         fi
     fi
-done < <(jq -r '.projects[] | .statusCounts as $sc | .title as $title | 
+done < <(jq -r '.projects[] | .statusCounts as $sc | .title as $title | .url as $url |
   ($sc.Total // 0) as $total |
   ($sc.Done // 0) as $done |
   ($sc.Todo // 0) as $todo |
   ($sc."In Progress" // 0) as $inProgress |
   (if $total > 0 then (($done * 100 / $total) | floor) else 0 end) as $rate |
-  $title, $total, $done, $inProgress, $todo, $rate
+  $title, $url, $total, $done, $inProgress, $todo, $rate
 ' "$DATA_PATH")
 
 PROJECT_BREAKDOWN="## 📋 Project Status
