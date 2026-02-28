@@ -171,7 +171,7 @@ while read -r title; do
 
     repos=$(jq -r --arg title "$title" '
         .projects[] | select(.title == $title) | .repositories.nodes[]
-        | "\(.nameWithOwner)|\(.isPrivate)|\(.url)"
+        | "\(.nameWithOwner)|\(.isPrivate // false)|\(.url)"
     ' "$DATA_PATH" 2>/dev/null)
 
     if [[ -n "$repos" && "$repos" != "null" ]]; then
