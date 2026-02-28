@@ -19,6 +19,10 @@
 
 Guidelines, coding standards, and PRD methodology.
 
+- [Code of Conduct](../community/CODE_OF_CONDUCT.md)
+- [Contributing Guidelines](../community/CONTRIBUTING.md)
+- [License](../community/LICENSE)
+
 ## 📬 Contact
 
 <maquejp@gmail.com>
