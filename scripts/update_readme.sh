@@ -185,34 +185,55 @@ LAST_UPDATED="Updated on $(date -u +'%Y-%m-%d %H:%M UTC')"
 
 cp "$TEMPLATE_PATH" "$OUTPUT_PATH"
 
-awk -v orgName="$ORG_NAME" '
-/<!-- ORGANISATION_NAME:START -->/ { print; print "# " orgName; skip=1; next }
+inject_content() {
+    local marker_start="$1"
+    local marker_end="$2"
+    local content="$3"
+    local file="$4"
+    
+    awk -v start="$marker_start" -v end="$marker_end" -v content="$content" '
+    BEGIN { gsub(/\\n/,"\n",content) }
+    $0 == start { found=1; print; while ((getline line) > 0) { if (line == end) { print content; print line; found=0; break } }; next }
+    !found { print }
+    ' "$file" > tmp && mv tmp "$file"
+}
+
+echo "$ORG_NAME" > /tmp/inject_org_name.txt
+echo "$ORG_DESC" > /tmp/inject_org_desc.txt
+echo "$GLOBAL_OVERVIEW" > /tmp/inject_global_overview.txt
+echo "$PROJECT_BREAKDOWN" > /tmp/inject_project_breakdown.txt
+echo "$LAST_UPDATED" > /tmp/inject_last_updated.txt
+
+awk '
+/<!-- ORGANISATION_NAME:START -->/ { print; if ((getline line < "/tmp/inject_org_name.txt") > 0) print line; skip=1; next }
 /<!-- ORGANISATION_NAME:END -->/ { if (skip) { print; skip=0; next }; print }
 { if (!skip) print }
 ' "$OUTPUT_PATH" > tmp && mv tmp "$OUTPUT_PATH"
 
-awk -v orgDesc="$ORG_DESC" '
-/<!-- ORGANISATION_DESCRIPTION:START -->/ { print; print "🚀 " orgDesc; skip=1; next }
+awk '
+/<!-- ORGANISATION_DESCRIPTION:START -->/ { print; if ((getline line < "/tmp/inject_org_desc.txt") > 0) print "🚀 " line; skip=1; next }
 /<!-- ORGANISATION_DESCRIPTION:END -->/ { if (skip) { print; skip=0; next }; print }
 { if (!skip) print }
 ' "$OUTPUT_PATH" > tmp && mv tmp "$OUTPUT_PATH"
 
-awk -v content="$GLOBAL_OVERVIEW" '
-/<!-- GLOBAL_OVERVIEW:START -->/ { print; print content; skip=1; next }
+awk '
+/<!-- GLOBAL_OVERVIEW:START -->/ { print; while ((getline line < "/tmp/inject_global_overview.txt") > 0) print line; skip=1; next }
 /<!-- GLOBAL_OVERVIEW:END -->/ { if (skip) { print; skip=0; next }; print }
 { if (!skip) print }
 ' "$OUTPUT_PATH" > tmp && mv tmp "$OUTPUT_PATH"
 
-awk -v content="$PROJECT_BREAKDOWN" '
-/<!-- PROJECT_BREAKDOWN:START -->/ { print; print content; skip=1; next }
+awk '
+/<!-- PROJECT_BREAKDOWN:START -->/ { print; while ((getline line < "/tmp/inject_project_breakdown.txt") > 0) print line; skip=1; next }
 /<!-- PROJECT_BREAKDOWN:END -->/ { if (skip) { print; skip=0; next }; print }
 { if (!skip) print }
 ' "$OUTPUT_PATH" > tmp && mv tmp "$OUTPUT_PATH"
 
-awk -v content="$LAST_UPDATED" '
-/<!-- LAST_UPDATED:START -->/ { print; print content; skip=1; next }
+awk '
+/<!-- LAST_UPDATED:START -->/ { print; if ((getline line < "/tmp/inject_last_updated.txt") > 0) print line; skip=1; next }
 /<!-- LAST_UPDATED:END -->/ { if (skip) { print; skip=0; next }; print }
 { if (!skip) print }
 ' "$OUTPUT_PATH" > tmp && mv tmp "$OUTPUT_PATH"
+
+rm -f /tmp/inject_*.txt
 
 echo "Updated $OUTPUT_PATH"
