@@ -114,4 +114,4 @@ This action is built with:
 
 ## License
 
-MIT License - see LICENSE file for details.
+[MIT License](LICENSE)
