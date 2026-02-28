@@ -168,6 +168,29 @@ while read -r title; do
 "
         fi
     fi
+
+    repos=$(jq -r --arg title "$title" '
+        .projects[] | select(.title == $title) | .repositories.nodes[]
+        | "\(.nameWithOwner)|\(.isPrivate // false)|\(.url)"
+    ' "$DATA_PATH" 2>/dev/null)
+
+    if [[ -n "$repos" && "$repos" != "null" ]]; then
+        PROJECT_BREAKDOWN+="
+**Repositories:**
+"
+        while IFS='|' read -r name is_private url; do
+            [[ -z "$name" || "$name" == "null" ]] && continue
+            if [[ "$is_private" == "true" ]]; then
+                PROJECT_BREAKDOWN+="- 🔒 $name
+"
+            else
+                PROJECT_BREAKDOWN+="- 🌐 [$name]($url)
+"
+            fi
+        done <<< "$repos"
+        PROJECT_BREAKDOWN+="
+"
+    fi
 done < <(jq -r '.projects[] | .statusCounts as $sc | .title as $title | .url as $url | .public as $isPublic |
   ($sc.Total // 0) as $total |
   ($sc.Done // 0) as $done |

@@ -80,6 +80,7 @@ RAW_RESPONSE=$(gh api graphql -f query='query($org: String!) {
             id
             nameWithOwner
             url
+            isPrivate
             issues { totalCount }
             openIssues: issues(states: OPEN) { totalCount }
             closedIssues: issues(states: CLOSED) { totalCount }

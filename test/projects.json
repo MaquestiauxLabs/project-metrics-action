@@ -329,6 +329,7 @@
             "id": "R_kgDORGG9QQ",
             "nameWithOwner": "MaquestiauxLabs/demo-angular-resume",
             "url": "https://github.com/MaquestiauxLabs/demo-angular-resume",
+            "isPrivate": false,
             "issues": {
               "totalCount": 13
             },
@@ -871,6 +872,7 @@
             "id": "R_kgDORGGx2A",
             "nameWithOwner": "MaquestiauxLabs/demo-react-resume",
             "url": "https://github.com/MaquestiauxLabs/demo-react-resume",
+            "isPrivate": false,
             "issues": {
               "totalCount": 17
             },
@@ -1806,6 +1808,7 @@
             "id": "R_kgDORTxeFQ",
             "nameWithOwner": "MaquestiauxLabs/demo-react-taskmanager",
             "url": "https://github.com/MaquestiauxLabs/demo-react-taskmanager",
+            "isPrivate": false,
             "issues": {
               "totalCount": 29
             },
@@ -1941,6 +1944,7 @@
             "id": "R_kgDORL7_3Q",
             "nameWithOwner": "MaquestiauxLabs/github-project-helper",
             "url": "https://github.com/MaquestiauxLabs/github-project-helper",
+            "isPrivate": false,
             "issues": {
               "totalCount": 3
             },
@@ -1992,17 +1996,17 @@
       "public": false,
       "closed": false,
       "createdAt": "2026-02-03T12:52:04Z",
-      "updatedAt": "2026-02-28T08:59:59Z",
+      "updatedAt": "2026-02-28T11:12:03Z",
       "creator": {
         "login": "maquejp"
       },
       "items": {
-        "totalCount": 1,
+        "totalCount": 4,
         "nodes": [
           {
             "id": "PVTI_lADOD2nfkc4BOMXyzgmXXp8",
             "status": {
-              "name": "In Progress"
+              "name": "Done"
             },
             "customType": null,
             "content": {
@@ -2021,6 +2025,67 @@
               },
               "body": "The visitor should only have the link working if the project is public. Linking to a private project does not make sense or only if the visitor is part of the team.\n\nA \"lock\" icon should be put after the project name for the private project.\nA \"earth\" icon shold be put after the project name for the public project."
             }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOMXyzgmXb0M",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Add LICENSE file and link it in README",
+              "number": 5,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": []
+              },
+              "body": "## Summary\nAdd an open-source `LICENSE` file to the repository and reference it from `README.md`.\n\n## Scope\n- Add a `LICENSE` file at the repository root.\n- Update `README.md` with a dedicated section or link pointing to the license.\n\n## Acceptance Criteria\n- `LICENSE` exists at the root and contains the chosen license text.\n- `README.md` includes a visible link to `LICENSE`.\n- Changes are committed in a PR and merged."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOMXyzgmXb0Y",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Add GitHub workflow to auto-update issue progress (like demo-task-manager)",
+              "number": 6,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": []
+              },
+              "body": "## Summary\nCreate a GitHub Actions workflow that updates issue progress automatically, following the same approach used in the `demo-task-manager` repository.\n\n## Scope\n- Identify the workflow pattern used in `demo-task-manager`.\n- Implement equivalent workflow(s) in this repository.\n- Configure required permissions and triggers.\n\n## Acceptance Criteria\n- Workflow file(s) are added under `.github/workflows/`.\n- Issue progress updates are performed automatically on relevant events.\n- Behavior is documented briefly in `README.md` (or repository docs).\n- Changes are validated via a PR and merged."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOMXyzgmXi2k",
+            "status": {
+              "name": "In Progress"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Add repository list to README with visibility-aware linking",
+              "number": 9,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "## Context\n\nCurrently, the repositories attached to a project are only used to compute language usage statistics for the whole project. These repositories are already fetched and included in the JSON output (`data/projects.json`).\n\n## Goal\n\nList the repositories under each project in the generated README, but only show a clickable link for public repositories. Private repositories should still be listed (without a link).\n\n## Requirements\n\n1. **GraphQL query update** (`scripts/get_data.sh`):\n   - Add `isPrivate` field to the repository query to expose visibility in JSON output\n\n2. **README generation update** (`scripts/update_readme.sh`):\n   - After language badges, list repositories under each project\n   - For **public repositories**: show as clickable link `[owner/repo](url)`\n   - For **private repositories**: show with lock icon (no link) `🔒 owner/repo`\n\n## Example Output\n\n```\n### 🌐 Project Name\n![Total](...) ![Done](...) ...\n\n![TypeScript 40%](...) ![HTML 30%](...) ![CSS 30%](...)\n\n**Repositories:**\n- [MaquestiauxLabs/demo-angular-resume](https://github.com/MaquestiauxLabs/demo-angular-resume)\n- 🔒 internal-backend\n```\n\n## Notes\n\n- JSON output should keep all repositories (both public and private) to maintain language statistics functionality\n- This follows the same pattern as project visibility handling in the current implementation"
+            }
           }
         ]
       },
@@ -2030,20 +2095,21 @@
             "id": "R_kgDORHgSLQ",
             "nameWithOwner": "MaquestiauxLabs/project-metrics-action",
             "url": "https://github.com/MaquestiauxLabs/project-metrics-action",
+            "isPrivate": false,
             "issues": {
-              "totalCount": 1
+              "totalCount": 4
             },
             "openIssues": {
               "totalCount": 1
             },
             "closedIssues": {
-              "totalCount": 0
+              "totalCount": 3
             },
             "languages": {
-              "totalSize": 11043,
+              "totalSize": 12999,
               "edges": [
                 {
-                  "size": 11043,
+                  "size": 12999,
                   "node": {
                     "name": "Shell"
                   }
@@ -2056,8 +2122,8 @@
       "statusCounts": {
         "Todo": 0,
         "In Progress": 1,
-        "Done": 0,
-        "Total": 1
+        "Done": 3,
+        "Total": 4
       }
     }
   ]
