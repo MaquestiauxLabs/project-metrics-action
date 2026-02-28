@@ -117,6 +117,7 @@ echo "$RAW_RESPONSE" | jq '{
     | .statusCounts = ($proj.items.nodes | map(.status.name // "Unassigned") | group_by(.) | map({key: .[0], value: length}) | from_entries)
     | .statusCounts = (($proj.statusField.options // []) | map(.name) | map({(.): 0}) | add) * .statusCounts
     | .statusCounts.Total = ([.statusCounts[]] | add)
+    | .public = $proj.public
     | del(.statusField)
   ))
 }' > "$OUT_PATH"

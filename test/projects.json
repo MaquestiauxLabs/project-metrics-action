@@ -1,0 +1,2064 @@
+{
+  "organisationName": "MaquestiauxLabs",
+  "organisationDescription": "Building robust, explicit, and maintainable software solutions.",
+  "organisationLocation": "Belgium",
+  "organisationAvatar": "https://avatars.githubusercontent.com/u/258596753?v=4",
+  "projects": [
+    {
+      "id": "PVT_kwDOD2nfkc4BOGsV",
+      "title": "Demo Resume (using Angular)",
+      "number": 3,
+      "url": "https://github.com/orgs/MaquestiauxLabs/projects/3",
+      "shortDescription": "A demo of a resume using Angular",
+      "public": false,
+      "closed": false,
+      "createdAt": "2026-02-02T15:10:59Z",
+      "updatedAt": "2026-02-13T15:20:17Z",
+      "creator": {
+        "login": "maquejp"
+      },
+      "items": {
+        "totalCount": 13,
+        "nodes": [
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQo98",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Professional Experience",
+              "number": 6,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component ProfessionalExperience, it will contains the list of professional experience.\nConsider using reusable ProfessionalExperienceCard component.\nThat card will show:\n1° company\n2° position\n3° duration\n4° location\n5° list of responsabilities\n6° list of technologies"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQoX8",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component Hero",
+              "number": 4,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component Hero section it will contains:\n1° Introduction\n2° Person short information\n2.1° Title i.e. Senior Application Architect\n2.2° Email i.e. user@example.com\n2.3° Social medias i.e. Linkeding link to profil"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglRWkI",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "TypeScript Configuration Error: Missing rootDir in tsconfig files",
+              "number": 15,
+              "issueType": null,
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "bug"
+                  },
+                  {
+                    "name": "typescript"
+                  },
+                  {
+                    "name": "configuration"
+                  }
+                ]
+              },
+              "body": "## Problem\nBoth `tsconfig.app.json` and `tsconfig.spec.json` have TypeScript compilation warnings due to missing explicit `rootDir` settings in their compiler options.\n\n## Details\n\n### tsconfig.app.json (Line 6)\n```\n\"outDir\": \"./out-tsc/app\",\n```\n**Error:** The common source directory of 'tsconfig.app.json' is './src'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.\n\n### tsconfig.spec.json (Line 6)\n```\n\"outDir\": \"./out-tsc/spec\",\n```\n**Error:** The common source directory of 'tsconfig.spec.json' is './src/app'. The 'rootDir' setting must be explicitly set to this or another path to adjust your output's file layout.\n\n## Suggested Fix\nAdd explicit `rootDir` compiler options to both configuration files:\n\n**For tsconfig.app.json:**\n```json\n\"compilerOptions\": {\n  \"outDir\": \"./out-tsc/app\",\n  \"rootDir\": \"./src\",\n  \"types\": []\n}\n```\n\n**For tsconfig.spec.json:**\n```json\n\"compilerOptions\": {\n  \"outDir\": \"./out-tsc/spec\",\n  \"rootDir\": \"./src\",\n  \"types\": [\n    \"vitest/globals\"\n  ]\n}\n```\n\n## References\n- [TypeScript Migration Guide](https://aka.ms/ts6)"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQnjg",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Create organized folder structure",
+              "number": 3,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "structure"
+                  }
+                ]
+              },
+              "body": "Create the folder structure for the app following best practice. i.e.\n```\nsrc/\n ├── app/\n │    ├── app.config.ts\n │    ├── app.routes.ts\n │    │\n │    ├── core/\n │    │     ├── config/\n │    │     ├── guards/\n │    │     ├── interceptors/\n │    │     ├── services/\n │    │     └── core.providers.ts\n │    │\n │    ├── shared/\n │    │     ├── ui/\n │    │     │     ├── button/\n │    │     │     ├── modal/\n │    │     │     └── form-controls/\n │    │     ├── directives/\n │    │     ├── pipes/\n │    │     └── utils/\n │    │\n │    ├── layout/\n │    │     ├── header/\n │    │     ├── sidebar/\n │    │     └── layout.component.ts\n │    │\n │    ├── features/\n │    │     ├── auth/\n │    │     │     ├── login/\n │    │     │     ├── register/\n │    │     │     ├── services/\n │    │     │     └── auth.routes.ts\n │    │     │\n │    │     ├── dashboard/\n │    │     │     ├── pages/\n │    │     │     ├── components/\n │    │     │     ├── services/\n │    │     │     ├── models/\n │    │     │     └── dashboard.routes.ts\n │    │     │\n │    │     └── <more-features>/\n │    │\n │    └── state/        (optional: signals, stores, NgRx)\n │\n ├── assets/\n │    ├── images/\n │    ├── icons/\n │    ├── data/\n │    └── styles/\n │         ├── base/\n │         ├── mixins/\n │         ├── variables/\n │         └── global.scss\n │\n ├── environments/\n │    ├── environment.ts\n │    └── environment.prod.ts\n │\n └── main.ts\n```"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzgkrkjo",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Create inital app",
+              "number": 1,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Use: ng new demo-angular-resume --directory . --style=tailwind --ssr=false --defaults"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQmMo",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Implement tailwindcss",
+              "number": 2,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Implement Tailwindcss follow the guid: https://angular.dev/guide/tailwind"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQosg",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component Footer",
+              "number": 5,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component Footer, it will contains the footer.\nIt will show:\n1° name\n2° title\n3° email\n4° phone\n5° copyrights"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQpJo",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Technical Skills",
+              "number": 7,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component TechnicalSkills, it will contains the list of technical skills.\nConsider using reusable TechnicalSkillCard component.\nThat card will show:\n1° category\n2° skills:\n2.1° name\n2.2° level anme + \"stars\" (n/5)\n2.3° level represented by a filled bar"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQpRk",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Education",
+              "number": 8,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component Eduction, it will contains the list of education.\nConsider using reusable EductionCard component.\nThat card will show:\n1° degree\n2° institution\n3° duration\n4° location\n5° list of achievements"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQpYw",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Trainings",
+              "number": 9,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component CertificationsProfessionalDevelopment, it will contains the list of Certifications & Professional Development.\nConsider using reusable CertificationsProfessionalDevelopmentCard component.\nThat card will show:\n1° name\n2° issuer\n3° date\n4° certificate"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQpgY",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: About me",
+              "number": 10,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Add a new section to the resume that provides a brief introduction about the person, highlighting their background, skills, and career goals. This section should be concise and engaging, giving potential employers or collaborators a quick overview of who they are and what they bring to the table."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglQpoA",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Languages",
+              "number": 11,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component showing the spoken/written languages based on the European Union levels (https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions)\nA1 Beginner - Basic understanding in simple everyday situations\nA2 Elementary - Can communicate in routine tasks requiring simple information\nB1 Intermediate - Can handle most situations while traveling or in work\nB2 Upper Intermediate - Can express opinions and arguments\nC1 Advanced - Can use language flexibly and effectively for social, academic, and professional purposes\nC2 Proficient - Near-native fluency and understanding"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGsVzglVDyQ",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Set up initial general layout",
+              "number": 16,
+              "issueType": null,
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "## Description\nSet up the initial general layout structure for the Angular resume application.\n\n## Tasks\n- [ ] Create main layout component structure\n- [ ] Define navigation/header layout\n- [ ] Set up content area layout\n- [ ] Add footer section\n- [ ] Implement responsive design considerations\n- [ ] Configure layout routing\n\n## Additional Context\nThis is a foundational task to establish the overall structure of the application before implementing specific features."
+            }
+          }
+        ]
+      },
+      "repositories": {
+        "nodes": [
+          {
+            "id": "R_kgDORGG9QQ",
+            "nameWithOwner": "MaquestiauxLabs/demo-angular-resume",
+            "url": "https://github.com/MaquestiauxLabs/demo-angular-resume",
+            "issues": {
+              "totalCount": 13
+            },
+            "openIssues": {
+              "totalCount": 0
+            },
+            "closedIssues": {
+              "totalCount": 13
+            },
+            "languages": {
+              "totalSize": 31918,
+              "edges": [
+                {
+                  "size": 12433,
+                  "node": {
+                    "name": "TypeScript"
+                  }
+                },
+                {
+                  "size": 8512,
+                  "node": {
+                    "name": "HTML"
+                  }
+                },
+                {
+                  "size": 10973,
+                  "node": {
+                    "name": "CSS"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "statusCounts": {
+        "Todo": 0,
+        "In Progress": 0,
+        "Done": 13,
+        "Total": 13
+      }
+    },
+    {
+      "id": "PVT_kwDOD2nfkc4BOGmN",
+      "title": "Demo Resume (using React)",
+      "number": 2,
+      "url": "https://github.com/orgs/MaquestiauxLabs/projects/2",
+      "shortDescription": "A demo of a resume using React and tailwindcss",
+      "public": false,
+      "closed": false,
+      "createdAt": "2026-02-02T14:55:19Z",
+      "updatedAt": "2026-02-11T13:43:49Z",
+      "creator": {
+        "login": "maquejp"
+      },
+      "items": {
+        "totalCount": 21,
+        "nodes": [
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1fYs",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Footer",
+              "number": 20,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "feature"
+                  }
+                ]
+              },
+              "body": "Create the component Footer, it will contains the footer.\nIt  will show:\n1° name\n2° title\n3° email\n4° phone\n5° copyrights"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgkriDo",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Create base project",
+              "number": 2,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Using [vite](https://vite.dev/) create the base application\n\nSelect a framework: React\nSelect a variant: TypeScript\nExperimental rolldow-vite: No\nInstall with npm and start: Yes"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgkwx1k",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Implement taillwindcss",
+              "number": 3,
+              "issueType": null,
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "tailwind"
+                  },
+                  {
+                    "name": "css"
+                  }
+                ]
+              },
+              "body": "<!-- Edit the body of your new issue then click the ✓ \"Create Issue\" button in the top right of the editor. The first line will be the issue title. Assignees and Labels follow after a blank line. Leave an empty line before beginning the body of the issue. -->"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgkw2ls",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "PullRequest",
+              "title": "feat: initialize React app with Vite and TypeScript",
+              "number": 4,
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": ""
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgkzOcA",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Install prettier and eslint to enforce code style and catch common errors.",
+              "number": 5,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "prettier"
+                  },
+                  {
+                    "name": "eslint"
+                  },
+                  {
+                    "name": "code-style"
+                  }
+                ]
+              },
+              "body": "<!-- Edit the body of your new issue then click the ✓ \"Create Issue\" button in the top right of the editor. The first line will be the issue title. Assignees and Labels follow after a blank line. Leave an empty line before beginning the body of the issue. -->"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1AjA",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Set up Project Structure",
+              "number": 7,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "feature"
+                  },
+                  {
+                    "name": "structure"
+                  }
+                ]
+              },
+              "body": "- Create organized folder structure (src/components, src/data, src/styles, etc.)\n- Set up barrel exports for clean imports\n- Configure path aliases in TypeScript\n\n<!-- Edit the body of your new issue then click the ✓ \"Create Issue\" button in the top right of the editor. The first line will be the issue title. Assignees and Labels follow after a blank line. Leave an empty line before beginning the body of the issue. -->"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1MMk",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Create organized folder structure (src/components, src/data, src/styles, etc.)",
+              "number": 10,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "structure"
+                  }
+                ]
+              },
+              "body": "Folders needed:\n- components\n- data (as this project will rely on json files)\n- interfaces\n- providers\n- hooks\n- assets\n- utils\n\nIn each folder add a README.md to describe the content."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1A6Y",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Build Components",
+              "number": 8,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "layout"
+                  }
+                ]
+              },
+              "body": "- Create Header component with sticky navigation\n- Build Footer component\n- Implement Main content area wrapper\n<!-- Edit the body of your new issue then click the ✓ \"Create Issue\" button in the top right of the editor. The first line will be the issue title. Assignees and Labels follow after a blank line. Leave an empty line before beginning the body of the issue. -->"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1Mnw",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Configure path aliases in TypeScript",
+              "number": 11,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "structure"
+                  }
+                ]
+              },
+              "body": ""
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1SIg",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "PullRequest",
+              "title": "Create organized folder structure (src/components, src/data, src/styles, etc.)",
+              "number": 12,
+              "labels": {
+                "nodes": []
+              },
+              "body": "Fixes #10"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1UyA",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "PullRequest",
+              "title": "Maquejp/issue7",
+              "number": 14,
+              "labels": {
+                "nodes": []
+              },
+              "body": ""
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1atQ",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Hero",
+              "number": 15,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component Hero section it will contains:\n1° Introduction\n2° Person short information\n2.1° Title i.e. Senior Application Architect\n2.2° Email i.e. user@example.com\n2.3° Social medias i.e. Linkeding link to profile"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1bYs",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Professional Experience",
+              "number": 16,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component ProfessionalExperience, it will contains the list of professional experience.\nConsider using reusable ProfessionalExperienceCard component.\nThat card will show:\n1° company\n2° position\n3° duration\n4° location\n5° list of responsabilities\n6° list of technologies"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1dfk",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Technical Skills",
+              "number": 17,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component TechnicalSkills, it will contains the list of technical skills.\nConsider using reusable TechnicalSkillCard component.\nThat card will show:\n1° category\n2° skills: \n2.1° name \n2.2° level anme + \"stars\" (n/5)\n2.3° level represented by a filled bar\n "
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1eGU",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Education",
+              "number": 18,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component Eduction, it will contains the list of education.\nConsider using reusable EductionCard component.\nThat card will show:\n1° degree\n2° institution\n3° duration\n4° location\n5° list of achievements"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk1fBg",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Trainings",
+              "number": 19,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component CertificationsProfessionalDevelopment, it will contains the list of Certifications & Professional Development.\nConsider using reusable CertificationsProfessionalDevelopmentCard component.\nThat card will show:\n1° name\n2° issuer\n3° date\n4° certificate"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk4mEE",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "PullRequest",
+              "title": "Maquejp/issue15",
+              "number": 21,
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": ""
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk4nQk",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: About me",
+              "number": 22,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Add a new section to the resume that provides a brief introduction about the person, highlighting their background, skills, and career goals. This section should be concise and engaging, giving potential employers or collaborators a quick overview of who they are and what they bring to the table.\n\n<!-- Edit the body of your new issue then click the ✓ \"Create Issue\" button in the top right of the editor. The first line will be the issue title. Assignees and Labels follow after a blank line. Leave an empty line before beginning the body of the issue. -->"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk6dpY",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "PullRequest",
+              "title": "Maquejp/issue16",
+              "number": 25,
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Fixes #16"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzgk82mI",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Component: Languages",
+              "number": 27,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create the component showing the spoken/written languages based on the European Union levels (https://www.coe.int/en/web/common-european-framework-reference-languages/level-descriptions)\nA1 Beginner - Basic understanding in simple everyday situations\nA2 Elementary - Can communicate in routine tasks requiring simple information\nB1 Intermediate - Can handle most situations while traveling or in work\nB2 Upper Intermediate - Can express opinions and arguments\nC1 Advanced - Can use language flexibly and effectively for social, academic, and professional purposes\nC2 Proficient - Near-native fluency and understanding"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOGmNzglQhaQ",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "fix: Add title to the AboutMe component",
+              "number": 32,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": ""
+            }
+          }
+        ]
+      },
+      "repositories": {
+        "nodes": [
+          {
+            "id": "R_kgDORGGx2A",
+            "nameWithOwner": "MaquestiauxLabs/demo-react-resume",
+            "url": "https://github.com/MaquestiauxLabs/demo-react-resume",
+            "issues": {
+              "totalCount": 17
+            },
+            "openIssues": {
+              "totalCount": 0
+            },
+            "closedIssues": {
+              "totalCount": 17
+            },
+            "languages": {
+              "totalSize": 29806,
+              "edges": [
+                {
+                  "size": 1095,
+                  "node": {
+                    "name": "JavaScript"
+                  }
+                },
+                {
+                  "size": 366,
+                  "node": {
+                    "name": "HTML"
+                  }
+                },
+                {
+                  "size": 11015,
+                  "node": {
+                    "name": "CSS"
+                  }
+                },
+                {
+                  "size": 17330,
+                  "node": {
+                    "name": "TypeScript"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "statusCounts": {
+        "Todo": 0,
+        "In Progress": 0,
+        "Done": 21,
+        "Total": 21
+      }
+    },
+    {
+      "id": "PVT_kwDOD2nfkc4BPmHI",
+      "title": "Demo Task Manager (Using React)",
+      "number": 7,
+      "url": "https://github.com/orgs/MaquestiauxLabs/projects/7",
+      "shortDescription": null,
+      "public": true,
+      "closed": false,
+      "createdAt": "2026-02-19T09:28:48Z",
+      "updatedAt": "2026-02-27T14:07:44Z",
+      "creator": {
+        "login": "maquejp"
+      },
+      "items": {
+        "totalCount": 28,
+        "nodes": [
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzglwR-4",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "USERS: Create API End Points",
+              "number": 1,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__users"
+                  },
+                  {
+                    "name": "__api"
+                  }
+                ]
+              },
+              "body": "| Method | Endpoint       | Description    |\n| ------ | -------------- | -------------- |\n| GET    | /api/users     | List all users |\n| POST   | /api/users     | Create a user  |\n| GET    | /api/users/:id | Get user by ID |\n| PUT    | /api/users/:id | Update user    |\n| DELETE | /api/users/:id | Delete user    |"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzglwSIU",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "USERS: Create Model",
+              "number": 2,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__users"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  }
+                ]
+              },
+              "body": "```prisma\nmodel User {\n    id         String   @id @unique @default(cuid())\n    email      String   @unique\n    givenName  String\n    familyName String\n    avatarUrl  String?\n    createdAt  DateTime @default(now())\n    updatedAt  DateTime @updatedAt\n}\n```"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzglxbAM",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "TASKS: Create model",
+              "number": 5,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__tasks"
+                  }
+                ]
+              },
+              "body": "| Field          | Type          | Description                                    |\n| -------------- | ------------- | ---------------------------------------------- |\n| id             | String (cuid) | Unique identifier                              |\n| title          | String        | Task title                                     |\n| description    | String?       | Detailed task description                      |\n| parentId       | String?       | Parent task for subtasks (null = root)         |\n| creatorId      | String        | User who created the task                      |\n| startDate      | DateTime?     | Optional task start date                       |\n| dueDate        | DateTime?     | Optional due date                              |\n| estimatedHours | Float?        | Estimated effort in hours                      |\n| createdAt      | DateTime      | Creation timestamp                             |\n| updatedAt      | DateTime      | Last update timestamp                          |"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzglxbBc",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "TASKS: Create API End Points",
+              "number": 6,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__tasks"
+                  }
+                ]
+              },
+              "body": "| Method | Endpoint                           | Description                                      |\n| ------ | ---------------------------------- | ------------------------------------------------ |\n| GET    | /api/tasks                         | List tasks (filter by project, status, assignee) |\n| POST   | /api/tasks                         | Create a task                                    |\n| GET    | /api/tasks/:id                     | Get task by ID                                   |\n| PUT    | /api/tasks/:id                     | Update task                                      |\n| DELETE | /api/tasks/:id                     | Delete task                                      |\n\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl1Qgw",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Document the models USER and TASK",
+              "number": 9,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "__users"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__tasks"
+                  }
+                ]
+              },
+              "body": "Add models explaination for USER and TASK. Include fields, data types, and relationships between the models. This will help in understanding how to structure the database and how the models interact with each other in the application.\n\n# USER Model\n\n| Field      | Type          | Description                |\n| ---------- | ------------- | -------------------------- |\n| id         | String (cuid) | Unique identifier          |\n| email      | String        | User's email (unique)      |\n| givenName  | String        | First name                 |\n| familyName | String        | Last name                  |\n| avatarUrl  | String?       | Optional avatar image URL  |\n| createdAt  | DateTime      | Account creation timestamp |\n| updatedAt  | DateTime      | Last update timestamp      |\n\n# TASK Model\n\n| Field          | Type          | Description                                    |\n| -------------- | ------------- | ---------------------------------------------- |\n| id             | String (cuid) | Unique identifier                              |\n| title          | String        | Task title                                     |\n| description    | String?       | Detailed task description                      |\n| parentId       | String?       | Parent task for subtasks (null = root)         |\n| creatorId      | String        | User who created the task                      |\n| startDate      | DateTime?     | Optional task start date                       |\n| dueDate        | DateTime?     | Optional due date                              |\n| estimatedHours | Float?        | Estimated effort in hours                      |\n| isRecurring    | Boolean       | Whether task repeats                           |\n| recurrenceRule | String?       | RRule string (RFC 5545) for recurrence pattern |\n| recurrenceEnd  | DateTime?     | End date for recurring tasks                   |\n| createdAt      | DateTime      | Creation timestamp                             |\n| updatedAt      | DateTime      | Last update timestamp                          |"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl1UmY",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "PROJECTS: Create Model",
+              "number": 11,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__models"
+                  },
+                  {
+                    "name": "__projects"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate the `Project` model.\n\nA container for organizing related tasks.\n\n## Fields\n| Field       | Type          | Description                  |\n| ----------- | ------------- | ---------------------------- |\n| id          | String (cuid) | Unique identifier            |\n| title       | String        | Project name                 |\n| description | String?       | Optional project description |\n| creatorId   | String        | User who owns the project    |\n| startDate   | DateTime?     | Optional project start date  |\n| endDate     | DateTime?     | Optional project end date    |\n| createdAt   | DateTime      | Creation timestamp           |\n| updatedAt   | DateTime      | Last update timestamp        |\n\n## Notes\n- No assignee.\n- Align naming and constraints with existing schema conventions."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl1Um4",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "PROJECTS: Create API End Points",
+              "number": 12,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__projects"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate project API endpoints.\n\n## Endpoints\n| Method | Endpoint          | Description       |\n| ------ | ----------------- | ----------------- |\n| GET    | /api/projects     | List all projects |\n| POST   | /api/projects     | Create a project  |\n| GET    | /api/projects/:id | Get project by ID |\n| PUT    | /api/projects/:id | Update project    |\n| DELETE | /api/projects/:id | Delete project    |\n\n## Notes\n- No assignee.\n- Keep behavior consistent with existing API patterns and error handling."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl2ACY",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "LABELS: Create Model",
+              "number": 15,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__labels"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate the `Label` model.\n\n## Fields\n| Field | Type | Description |\n| --- | --- | --- |\n| id | String (cuid) | Unique identifier |\n| name | String | Label name |\n| color | String | Hex color code (e.g., `#FF5733`) |\n| creatorId | String | User who created the task |\n| createdAt | DateTime | Creation timestamp |\n| updatedAt | DateTime | Last update timestamp |\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl2AEc",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "LABELS: Create API End Points",
+              "number": 16,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__labels"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate API endpoints for labels.\n\n## Relationship\nBlocked by #15\n\n## Endpoints\n| Method | Endpoint | Description |\n| --- | --- | --- |\n| GET | /api/labels | List global labels |\n| POST | /api/labels | Add labels |\n| PUT | /api/labels/:id | Update labels |\n| DELETE | /api/labels/:id | Delete labels |\n\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl2A5g",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "STATUSES: Create API End Points",
+              "number": 17,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__statuses"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate API endpoints for statuses.\n\n## Relationship\nBlocked by #18\n\n## Endpoints\n| Method | Endpoint | Description |\n| --- | --- | --- |\n| GET | /api/statuses | List global statuses |\n| POST | /api/statuses | Add status |\n| PUT | /api/statuses/:id | Update status |\n| DELETE | /api/statuses/:id | Delete status |\n\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl2A5s",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "STATUSES: Create Model",
+              "number": 18,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__statuses"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate the `Status` model.\n\n## Fields\n| Field | Type | Description |\n| --- | --- | --- |\n| id | String (cuid) | Unique identifier |\n| name | String | Status name |\n| color | String | Hex color code (e.g., `#FF5733`) |\n| creatorId | String | User who created the status |\n| createdAt | DateTime | Creation timestamp |\n| updatedAt | DateTime | Last update timestamp |\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl2B00",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "PRIORITIES: Create Model",
+              "number": 19,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__priorities"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate the `Priority` model.\n\n## Fields\n| Field | Type | Description |\n| --- | --- | --- |\n| id | String (cuid) | Unique identifier |\n| name | String | Priority name |\n| color | String | Hex color code (e.g., `#FF5733`) |\n| creatorId | String | User who created the priority |\n| createdAt | DateTime | Creation timestamp |\n| updatedAt | DateTime | Last update timestamp |\n\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl2B04",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "PRIORITIES: Create API End Points",
+              "number": 20,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__priorities"
+                  }
+                ]
+              },
+              "body": "## Summary\nCreate API endpoints for priorities.\n\n## Relationship\nBlocked by #19\n\n## Endpoints\n| Method | Endpoint | Description |\n| --- | --- | --- |\n| GET | /api/priorities | List global priorities |\n| POST | /api/priorities | Add priority |\n| PUT | /api/priorities/:id | Update priority |\n| DELETE | /api/priorities/:id | Delete priority |\n\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl-gaA",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "ROLES - Create Model",
+              "number": 27,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__roles"
+                  }
+                ]
+              },
+              "body": "Create a new `Role` model.\n\n## Requirements\n\n| Field     | Type          | Description                            |\n| --------- | ------------- | -------------------------------------- |\n| id        | String (cuid) | Unique identifier                      |\n| name      | String        | Label name                             |\n| color     | String        | Hex color code (e.g., \"#FF5733\")     |\n| creatorId | String        | User who created the task              |\n| createdAt | DateTime      | Creation timestamp                     |\n| updatedAt | DateTime      | Last update timestamp                  |\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl-gbs",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "ROLES - Create API End Points",
+              "number": 28,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__roles"
+                  }
+                ]
+              },
+              "body": "Create role API endpoints.\n\n## Relationships\n- Blocked by: #27 (`ROLES - Create Model`)\n\n## Endpoints\n\n| Method | Endpoint        | Description          |\n| ------ | --------------- | -------------------- |\n| GET    | /api/roles      | List global roles    |\n| POST   | /api/roles      | Add role             |\n| PUT    | /api/roles/:id  | Update role          |\n| DELETE | /api/roles/:id  | Delete role          |\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl-mu0",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "TASKS - Support labels, priority, and status on tasks",
+              "number": 31,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__tasks"
+                  }
+                ]
+              },
+              "body": "Goal: Allow a task to have labels (can have more than one), priority, and status.\n\n## Scope\n- Update data model and database schema for task relationships.\n- Expose API support to create, read, and update these task associations.\n\n## Requirements\n- A task can have multiple labels.\n- A task can have one priority.\n- A task can have one status.\n"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgl-4Vg",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "DOCS: Harmonise models header",
+              "number": 33,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__models"
+                  }
+                ]
+              },
+              "body": "Harmonise the moldes file header"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmDi5A",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "TASKS/PROJECTS: Add optional task-to-project association in data model",
+              "number": 35,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__tasks"
+                  },
+                  {
+                    "name": "__projects"
+                  }
+                ]
+              },
+              "body": "## Goal\nAllow a task to be associated to a project, while keeping this association optional.\n\n## Requirements\n- Update models so a task can reference one project.\n- Keep project association optional (task may exist without project).\n- Update Prisma schema and migration accordingly.\n- Ensure relation integrity between `Task` and `Project` models.\n- Update seed/data handling if needed to keep seed scripts consistent.\n\n## Acceptance Criteria\n- `Task` model supports nullable project reference.\n- `Project` model exposes related tasks collection.\n- Database migration applies cleanly.\n- Existing task creation flow works when no project is provided.\n\n## Notes\nThis issue is a blocker for API endpoints to assign/unassign tasks to projects."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmDi64",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "API: Add endpoints to assign and unassign a task to/from a project",
+              "number": 36,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__tasks"
+                  },
+                  {
+                    "name": "__projects"
+                  }
+                ]
+              },
+              "body": "## Goal\nAdapt the API to manage task/project association.\n\n## Requirements\n- Add endpoint to assign a task to a project.\n- Add endpoint to unassign a task from its project.\n- Validate that task and project exist before assignment.\n- Return consistent API responses and errors.\n- Keep assignment optional (unassign sets project link to null).\n\n## Acceptance Criteria\n- API supports assigning a task to a project.\n- API supports removing project association from a task.\n- Invalid task/project IDs return expected error responses.\n- Existing task endpoints remain backward compatible.\n\n## Dependency\nBlocked by #35."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmEhAc",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "PROJECTS: Add priority, status, and labels support to Project model",
+              "number": 39,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__model"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__projects"
+                  },
+                  {
+                    "name": "__labels"
+                  },
+                  {
+                    "name": "__statuses"
+                  },
+                  {
+                    "name": "__priorities"
+                  }
+                ]
+              },
+              "body": "## Goal\nBring Project metadata capabilities in line with Task by adding priority, status, and labels support.\n\n## Problem\nTask supports relations to priority, status, and labels, while Project currently does not.\n\n## Scope\n- Update Prisma Project model to support:\n  - one optional priority\n  - one optional status\n  - many labels\n- Update schema and migrations accordingly.\n- Expose and propagate these fields through API and service layers where required.\n\n## Acceptance Criteria\n- Project can reference an optional Priority.\n- Project can reference an optional Status.\n- Project can reference multiple Label entries.\n- Migration applies cleanly and existing project CRUD remains compatible."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmJfh0",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Make tasks seed lookups case-insensitive for priority/status/labels/project",
+              "number": 40,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__models"
+                  }
+                ]
+              },
+              "body": "## Summary\nAlign `server/prisma/seed/tasks.seed.ts` with `projects.seed.ts` by making relation lookups case-insensitive.\n\n## Context\n`projects.seed.ts` now normalizes lookup keys via lowercasing + trimming, so mixed-case seed references resolve correctly. `tasks.seed.ts` still uses case-sensitive maps for:\n- `priorityName`\n- `statusName`\n- `labelNames`\n- `projectTitle`\n\n## Proposed changes\n- Add a shared local helper (e.g. `toLookupKey(value: string)`) in `tasks.seed.ts`.\n- Build lookup maps with normalized keys.\n- Resolve incoming seed references using normalized keys.\n- Keep existing fail/skip behavior unless explicitly changed.\n\n## Acceptance criteria\n- Mixed-case task seed values resolve correctly (e.g. `hIgH`, `in progress`, `baCkEnd`, `platform launch`).\n- Existing canonical values continue to resolve as before.\n- Seeding runs successfully without schema changes.\n\n## Nice to have\n- Optional follow-up: align error behavior in tasks seeding with projects seeding for missing references."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmJpiU",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Standardize API JSON response envelope with pagination, sorting, and filter metadata",
+              "number": 41,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  }
+                ]
+              },
+              "body": "## Summary\nStandardize list endpoint responses so clients always receive a consistent JSON envelope that includes:\n- total records\n- paging information\n- sorting information\n- query/filter information\n\n## Problem\nCurrent API responses are not fully standardized across endpoints, which makes frontend integration and reusable data utilities harder. Consumers should not need endpoint-specific parsing logic for metadata.\n\n## Proposal\nDefine and apply a common response structure for collection/list endpoints.\n\nExample shape:\n```json\n{\n  \"data\": [],\n  \"meta\": {\n    \"total\": 0,\n    \"paging\": {\n      \"page\": 1,\n      \"pageSize\": 20,\n      \"totalPages\": 0,\n      \"hasNext\": false,\n      \"hasPrev\": false\n    },\n    \"sorting\": {\n      \"sortBy\": \"createdAt\",\n      \"order\": \"desc\"\n    },\n    \"filters\": {\n      \"status\": \"todo\",\n      \"priority\": \"high\",\n      \"search\": \"auth\"\n    }\n  }\n}\n```\n\n## Scope\n- Apply to all list endpoints (tasks, projects, users, labels, priorities, statuses, roles).\n- Keep single-resource endpoints (`GET /:id`) unchanged unless explicitly needed.\n- Ensure metadata reflects effective query values (including defaults).\n\n## Acceptance Criteria\n- [ ] A shared response contract is documented (README or docs).\n- [ ] All list endpoints return the same top-level envelope (`data`, `meta`).\n- [ ] `meta.total` returns total records matching applied filters (before page slicing).\n- [ ] `meta.paging` includes page, pageSize, totalPages, hasNext, hasPrev.\n- [ ] `meta.sorting` includes sort field and order.\n- [ ] `meta.filters` echoes parsed query/filter params used by backend.\n- [ ] Validation errors remain consistent with existing error middleware.\n- [ ] Existing frontend consumers are updated or remain backward compatible.\n\n## Notes\nConsider introducing a reusable helper/utility in the server layer to avoid duplication and guarantee consistent structure across controllers/services."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmKIZI",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Implement standardiseResponse across all API services",
+              "number": 45,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  }
+                ]
+              },
+              "body": "## Summary\nStandardize API service responses by implementing `standardiseResponse` consistently across all service modules.\n\n## Objective\nEnsure every API service method returns a unified response shape (success/error) using `standardiseResponse`, matching current project conventions.\n\n## Scope\n- Audit all files in `server/services/`.\n- Apply `standardiseResponse` to endpoints/methods that are not yet standardized.\n- Align HTTP status codes and message/error fields for consistency.\n- Keep behavior backward-compatible where possible.\n\n## Acceptance Criteria\n- All service methods in `server/services/` return responses via `standardiseResponse`.\n- Success responses include consistent `message`, `httpStatus`, and `data` when applicable.\n- Error paths include consistent `message`, `httpStatus`, and `error`.\n- No regressions in existing API behavior.\n\n## Notes\nReference existing implementation patterns such as in `projects.service.ts` for consistency."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmOWg0",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Create local SSO server for development using Keycloak container",
+              "number": 47,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__devops"
+                  },
+                  {
+                    "name": "__sso"
+                  },
+                  {
+                    "name": "__keycloak"
+                  }
+                ]
+              },
+              "body": "## Context\nWe need a local SSO server for development and integration testing.\n\nProposed solution: run **Keycloak** in a container and wire it to the local environment.\n\nReferences:\n- https://quay.io/repository/keycloak/keycloak\n- https://www.keycloak.org/\n\n## Goal\nProvide a reproducible local SSO setup that developers can start with one command and use from the app/API during development.\n\n## Scope\n- Add a local Keycloak service (containerized) suitable for development.\n- Define required environment variables and default ports.\n- Configure a development realm/client/users (seed or documented manual steps).\n- Document local startup, login flow, and token usage.\n- Add integration notes for client/server configuration.\n\n## Acceptance Criteria\n- [ ] Developers can start Keycloak locally via container command(s).\n- [ ] App and API can authenticate against local Keycloak in development mode.\n- [ ] Required realm/client settings are documented or automated.\n- [ ] Project documentation includes clear setup and troubleshooting steps.\n\n## Notes\n- Intended for **development purpose only** (not production hardening).\n- Keep configuration simple and reproducible for onboarding."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmO65s",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Add comments model supporting tasks and projects",
+              "number": 48,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__models"
+                  },
+                  {
+                    "name": "__comments"
+                  }
+                ]
+              },
+              "body": "## Context\nWe need a comments domain model where comments can be attached to both tasks and projects.\n\n## Goal\nIntroduce a `Comment` model in the data layer and schema so the application can persist and query comments linked to tasks and projects.\n\n## Scope\n- Add Prisma `Comment` model and relations with `Task` and `Project`.\n- Define required fields (id, content/body, author reference if applicable, timestamps).\n- Define relation behavior and constraints (nullability, cascade behavior, indexes).\n- Update migration(s) and generated client artifacts.\n- Update schema documentation in `docs/`.\n\n## Acceptance Criteria\n- [x] `Comment` model exists in Prisma schema.\n- [x] A task can have multiple comments.\n- [x] A project can have multiple comments.\n- [x] Migrations run successfully in local development.\n- [x] Documentation reflects the new model and relations.\n\n## Notes\n- Keep naming and relation conventions aligned with existing models."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmO67c",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Implement comments API endpoints for tasks and projects",
+              "number": 49,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  },
+                  {
+                    "name": "__comments"
+                  }
+                ]
+              },
+              "body": "## Context\nAfter introducing the comments model, we need API endpoints to create and manage comments for tasks and projects.\n\n## Goal\nExpose REST endpoints to manage comments associated with tasks and projects in a consistent way with existing API patterns.\n\n## Scope\n- Add comments routes/controller/service modules.\n- Implement create/read/update/delete endpoints for comments.\n- Support listing comments by task and by project.\n- Validate request payloads and return consistent error responses.\n- Update route registration and API docs/README where relevant.\n\n## Acceptance Criteria\n- [ ] Endpoints exist to create/list/update/delete comments.\n- [ ] Comments can be listed by task id.\n- [ ] Comments can be listed by project id.\n- [ ] Input validation and error handling follow existing conventions.\n- [ ] Endpoint usage is documented for local development/testing.\n\n## Notes\n- Keep controller/service split aligned with existing modules (`tasks`, `projects`, etc.)."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmPM7w",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Refactor all remaining many-to-many relations to explicit join models with meaningful FK names",
+              "number": 51,
+              "issueType": {
+                "name": "Task"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__database"
+                  },
+                  {
+                    "name": "__models"
+                  }
+                ]
+              },
+              "body": "## Context\nWe already applied explicit join models for comments to avoid implicit M:N join columns named `A` and `B`.\n\nThe same convention should be applied to all other many-to-many relations in the schema for consistency and readability.\n\n## Goal\nReplace remaining implicit many-to-many relations with explicit join models that use meaningful foreign key names (e.g. `taskId`, `labelId`, `projectId`, etc.).\n\n## Scope\n- Identify all remaining implicit M:N relations currently generating join tables with `A`/`B` columns.\n- Create explicit join models for each relation.\n- Use meaningful FK field names in join models.\n- Keep or define clear table names via `@@map(...)` where needed.\n- Update Prisma model relation fields in both related models.\n- Generate and apply migration(s).\n- Regenerate Prisma client/zod/docs.\n- Update services/repositories if query shapes change.\n\n## Acceptance Criteria\n- [ ] No remaining business-domain M:N relation relies on implicit `A`/`B` columns.\n- [ ] Join tables expose meaningful FK column names.\n- [ ] Migration applies successfully in local dev DB.\n- [ ] `prisma generate` and server build pass.\n- [ ] Documentation reflects updated relation models.\n\n## Notes\n- Maintain naming consistency with existing conventions introduced for comments.\n- Avoid breaking API contracts unless explicitly planned and documented."
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BPmHIzgmUiv4",
+            "status": {
+              "name": "Todo"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "[Server] Add Swagger/OpenAPI documentation for API",
+              "number": 55,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "documentation"
+                  },
+                  {
+                    "name": "enhancement"
+                  },
+                  {
+                    "name": "__api"
+                  }
+                ]
+              },
+              "body": "## Summary\nAdd Swagger/OpenAPI documentation to the server API so endpoints are discoverable, testable, and easier to maintain.\n\n## Scope\n- Integrate Swagger UI route in the Express server.\n- Generate and expose OpenAPI spec for all current API routes.\n- Document request/response schemas and status codes for core resources.\n- Include setup/usage instructions in server docs.\n\n## Acceptance Criteria\n- Swagger UI is available from the running server.\n- OpenAPI spec includes Users, Tasks, Projects, Labels, Statuses, Priorities, Roles, and Comments endpoints.\n- Endpoint docs include payload examples and key response codes.\n- README documents how to access and use Swagger locally.\n\n## Notes\nThis issue is created as a **Feature** request."
+            }
+          }
+        ]
+      },
+      "repositories": {
+        "nodes": [
+          {
+            "id": "R_kgDORTxeFQ",
+            "nameWithOwner": "MaquestiauxLabs/demo-react-taskmanager",
+            "url": "https://github.com/MaquestiauxLabs/demo-react-taskmanager",
+            "issues": {
+              "totalCount": 29
+            },
+            "openIssues": {
+              "totalCount": 2
+            },
+            "closedIssues": {
+              "totalCount": 27
+            },
+            "languages": {
+              "totalSize": 85310,
+              "edges": [
+                {
+                  "size": 1264,
+                  "node": {
+                    "name": "JavaScript"
+                  }
+                },
+                {
+                  "size": 355,
+                  "node": {
+                    "name": "HTML"
+                  }
+                },
+                {
+                  "size": 83668,
+                  "node": {
+                    "name": "TypeScript"
+                  }
+                },
+                {
+                  "size": 23,
+                  "node": {
+                    "name": "CSS"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "statusCounts": {
+        "Todo": 1,
+        "In Progress": 0,
+        "Done": 27,
+        "Total": 28
+      }
+    },
+    {
+      "id": "PVT_kwDOD2nfkc4BOs8N",
+      "title": "Github Project Helper",
+      "number": 5,
+      "url": "https://github.com/orgs/MaquestiauxLabs/projects/5",
+      "shortDescription": "Manage GitHub Project V2 statuses directly from VS Code with GitHub CLI integration",
+      "public": false,
+      "closed": false,
+      "createdAt": "2026-02-09T08:10:10Z",
+      "updatedAt": "2026-02-10T13:23:22Z",
+      "creator": {
+        "login": "maquejp"
+      },
+      "items": {
+        "totalCount": 3,
+        "nodes": [
+          {
+            "id": "PVTI_lADOD2nfkc4BOs8NzglE6iU",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "COMMAND: Updating GitHub Project Status",
+              "number": 2,
+              "issueType": null,
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "Create a command to update the status of a GitHub project. The command should allow users to specify the project name, the new status, and any relevant details about the update. The command should also include error handling for cases where the project does not exist or the user does not have permission to update the project.\n\n<!-- Edit the body of your new issue then click the ✓ \"Create Issue\" button in the top right of the editor. The first line will be the issue title. Assignees and Labels follow after a blank line. Leave an empty line before beginning the body of the issue. -->"
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOs8NzglE5Bk",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Initialise the project",
+              "number": 1,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": ""
+            }
+          },
+          {
+            "id": "PVTI_lADOD2nfkc4BOs8NzglLi1A",
+            "status": {
+              "name": "Done"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Create an UI instead of commands",
+              "number": 4,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": []
+              },
+              "body": ""
+            }
+          }
+        ]
+      },
+      "repositories": {
+        "nodes": [
+          {
+            "id": "R_kgDORL7_3Q",
+            "nameWithOwner": "MaquestiauxLabs/github-project-helper",
+            "url": "https://github.com/MaquestiauxLabs/github-project-helper",
+            "issues": {
+              "totalCount": 3
+            },
+            "openIssues": {
+              "totalCount": 0
+            },
+            "closedIssues": {
+              "totalCount": 3
+            },
+            "languages": {
+              "totalSize": 64753,
+              "edges": [
+                {
+                  "size": 2398,
+                  "node": {
+                    "name": "JavaScript"
+                  }
+                },
+                {
+                  "size": 31790,
+                  "node": {
+                    "name": "TypeScript"
+                  }
+                },
+                {
+                  "size": 30565,
+                  "node": {
+                    "name": "HTML"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "statusCounts": {
+        "Todo": 0,
+        "In Progress": 0,
+        "Done": 3,
+        "Total": 3
+      }
+    },
+    {
+      "id": "PVT_kwDOD2nfkc4BOMXy",
+      "title": "Project Metrics Action",
+      "number": 4,
+      "url": "https://github.com/orgs/MaquestiauxLabs/projects/4",
+      "shortDescription": "A GitHub Action that automatically collects project statistics from GitHub Projects v2 and generates beautiful, badge-based metrics displays for organization profiles. It tracks task progress across all projects, analyzes programming language usage, and injects modular sections into README files wit",
+      "public": false,
+      "closed": false,
+      "createdAt": "2026-02-03T12:52:04Z",
+      "updatedAt": "2026-02-28T08:59:59Z",
+      "creator": {
+        "login": "maquejp"
+      },
+      "items": {
+        "totalCount": 1,
+        "nodes": [
+          {
+            "id": "PVTI_lADOD2nfkc4BOMXyzgmXXp8",
+            "status": {
+              "name": "In Progress"
+            },
+            "customType": null,
+            "content": {
+              "__typename": "Issue",
+              "title": "Remove link to the project if it is private",
+              "number": 3,
+              "issueType": {
+                "name": "Feature"
+              },
+              "labels": {
+                "nodes": [
+                  {
+                    "name": "enhancement"
+                  }
+                ]
+              },
+              "body": "The visitor should only have the link working if the project is public. Linking to a private project does not make sense or only if the visitor is part of the team.\n\nA \"lock\" icon should be put after the project name for the private project.\nA \"earth\" icon shold be put after the project name for the public project."
+            }
+          }
+        ]
+      },
+      "repositories": {
+        "nodes": [
+          {
+            "id": "R_kgDORHgSLQ",
+            "nameWithOwner": "MaquestiauxLabs/project-metrics-action",
+            "url": "https://github.com/MaquestiauxLabs/project-metrics-action",
+            "issues": {
+              "totalCount": 1
+            },
+            "openIssues": {
+              "totalCount": 1
+            },
+            "closedIssues": {
+              "totalCount": 0
+            },
+            "languages": {
+              "totalSize": 11043,
+              "edges": [
+                {
+                  "size": 11043,
+                  "node": {
+                    "name": "Shell"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "statusCounts": {
+        "Todo": 0,
+        "In Progress": 1,
+        "Done": 0,
+        "Total": 1
+      }
+    }
+  ]
+}
