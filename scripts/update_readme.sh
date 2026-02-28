@@ -175,7 +175,8 @@ while read -r title; do
     ' "$DATA_PATH" 2>/dev/null)
 
     if [[ -n "$repos" && "$repos" != "null" ]]; then
-        PROJECT_BREAKDOWN+="**Repositories:**
+        PROJECT_BREAKDOWN+="
+**Repositories:**
 "
         while IFS='|' read -r name is_private url; do
             [[ -z "$name" || "$name" == "null" ]] && continue
