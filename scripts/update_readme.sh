@@ -184,7 +184,7 @@ while read -r title; do
                 PROJECT_BREAKDOWN+="- 🔒 $name
 "
             else
-                PROJECT_BREAKDOWN+="- [$name]($url)
+                PROJECT_BREAKDOWN+="- 🌐 [$name]($url)
 "
             fi
         done <<< "$repos"
